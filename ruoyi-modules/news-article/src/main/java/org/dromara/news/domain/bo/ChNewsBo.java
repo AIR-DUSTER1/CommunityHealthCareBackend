@@ -31,7 +31,6 @@ public class ChNewsBo extends BaseEntity {
      * 新闻封面
      */
     @NotBlank(message = "新闻封面不能为空", groups = { AddGroup.class, EditGroup.class })
-    @Translation(type = TransConstant.URl, mapper = "cover")
     private String cover;
 
     /**
@@ -62,7 +61,7 @@ public class ChNewsBo extends BaseEntity {
      * 状态
      */
     @NotNull(message = "状态不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Long status;
+    private String status;
 
 
 }

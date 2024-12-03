@@ -1,10 +1,19 @@
 package org.dromara.system.controller.system;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.dromara.common.core.constant.Constants;
+import org.dromara.common.core.constant.GlobalConstants;
 import org.dromara.common.core.domain.R;
+import org.dromara.common.core.domain.model.SmsLoginBody;
+import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.user.CaptchaException;
+import org.dromara.common.core.exception.user.CaptchaExpireException;
+import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.file.MimeTypeUtils;
 import org.dromara.common.encrypt.annotation.ApiEncrypt;
@@ -12,11 +21,12 @@ import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.helper.DataPermissionHelper;
+import org.dromara.common.ratelimiter.annotation.RateLimiter;
+import org.dromara.common.ratelimiter.enums.LimitType;
+import org.dromara.common.redis.utils.RedisUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.web.core.BaseController;
-import org.dromara.system.domain.bo.SysUserBo;
-import org.dromara.system.domain.bo.SysUserPasswordBo;
-import org.dromara.system.domain.bo.SysUserProfileBo;
+import org.dromara.system.domain.bo.*;
 import org.dromara.system.domain.vo.AvatarVo;
 import org.dromara.system.domain.vo.ProfileVo;
 import org.dromara.system.domain.vo.SysOssVo;
@@ -66,13 +76,6 @@ public class SysProfileController extends BaseController {
     public R<Void> updateProfile(@Validated @RequestBody SysUserProfileBo profile) {
         SysUserBo user = BeanUtil.toBean(profile, SysUserBo.class);
         user.setUserId(LoginHelper.getUserId());
-        String username = LoginHelper.getUsername();
-        if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
-            return R.fail("修改用户'" + username + "'失败，手机号码已存在");
-        }
-        if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user)) {
-            return R.fail("修改用户'" + username + "'失败，邮箱账号已存在");
-        }
         int rows = DataPermissionHelper.ignore(() -> userService.updateUserProfile(user));
         if (rows > 0) {
             return R.ok();
@@ -129,4 +132,80 @@ public class SysProfileController extends BaseController {
         }
         return R.fail("上传图片异常，请联系管理员");
     }
+
+    /**
+     * 修改手机号
+     * @param phoneBo
+     * @return
+     * @author AIR-USETER1
+     */
+    @SaCheckLogin
+    @RepeatSubmit
+    @Log(title = "个人信息", businessType = BusinessType.UPDATE)
+    @PutMapping("/updatePhone")
+    public R<Void> updatePhone(@Validated @RequestBody SysUserPhoneBo phoneBo) {
+        validateSmsCode(phoneBo.getPhonenumber(), phoneBo.getSmsCode());
+        SysUserBo user = BeanUtil.toBean(phoneBo, SysUserBo.class);
+        user.setUserId(LoginHelper.getUserId());
+        String username = LoginHelper.getUsername();
+        if (StringUtils.isNotEmpty(phoneBo.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
+            return R.fail("修改用户'" + username + "'失败，手机号码已存在");
+        }
+        return toAjax(userService.updateUserPhone(user.getUserId(), user.getPhonenumber()));
+    }
+    @SaCheckLogin
+    @RepeatSubmit
+    @Log(title = "个人信息", businessType = BusinessType.UPDATE)
+    @PutMapping("/updateEmail")
+    public R<Void> updateEmail(@Validated @RequestBody SysUserEmailBo emailBo) {
+        validateSmsCode(emailBo.getEmail(), emailBo.getCode());
+        SysUserBo user = BeanUtil.toBean(emailBo, SysUserBo.class);
+        user.setUserId(LoginHelper.getUserId());
+        String username = LoginHelper.getUsername();
+        if (StringUtils.isNotEmpty(emailBo.getEmail()) && !userService.checkEmailUnique(user)) {
+            return R.fail("修改用户'" + username + "'失败，邮箱已存在");
+        }
+        return toAjax(userService.updateUserEmail(user.getUserId(), user.getEmail()));
+    }
+    /**
+     * 校验手机验证码
+     */
+    @RateLimiter(time = 60, count = 10, limitType = LimitType.IP)
+    @GetMapping("/check/sms")
+    public R<Void> checkSmsCode(@NotBlank(message = "{user.phonenumber.not.blank}") String phonenumber, String smsCode) {
+        SysUserVo userVo = userService.selectUserById(LoginHelper.getUserId());
+        if (!userVo.getPhonenumber().equalsIgnoreCase(phonenumber)){
+            return R.fail("修改的非本手机号");
+        }
+        validateSmsCode(phonenumber, smsCode);
+        return R.ok();
+    }
+
+    /**
+     * 校验邮箱验证码
+     */
+    @RateLimiter(time = 60, count = 10, limitType = LimitType.IP)
+    @GetMapping("/check/email")
+    public R<Void> checkEmailCode(@NotBlank(message = "{user.email.not.blank}") String email, String code) {
+        SysUserVo userVo = userService.selectUserById(LoginHelper.getUserId());
+        if (userVo.getEmail().isEmpty()){
+            return R.ok();
+        }
+        if (!userVo.getEmail().equalsIgnoreCase(email)){
+            return R.fail("修改的非本邮箱");
+        }
+        validateSmsCode(email, code);
+        return R.ok();
+    }
+
+    private void validateSmsCode(String key, String smsCode){
+        String code = RedisUtils.getCacheObject(GlobalConstants.CAPTCHA_CODE_KEY + key);
+        if (StringUtils.isBlank(code)) {
+            throw new CaptchaExpireException();
+        }
+        if (!code.equalsIgnoreCase(smsCode)){
+            throw new CaptchaException();
+        }
+    }
+
 }

@@ -40,7 +40,6 @@ public class ChNewsVo implements Serializable {
      * 新闻封面
      */
     @ExcelProperty(value = "新闻封面")
-    @Translation(type = TransConstant.OSS_ID_TO_URL, mapper = "cover")
     private String cover;
     /**
      * 作者
@@ -77,7 +76,7 @@ public class ChNewsVo implements Serializable {
      */
     @ExcelProperty(value = "状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "ch_news_status")
-    private Long status;
+    private String status;
 
     /**
      * 创建部门

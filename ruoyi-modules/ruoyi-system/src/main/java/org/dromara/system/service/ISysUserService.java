@@ -1,5 +1,6 @@
 package org.dromara.system.service;
 
+import jakarta.validation.constraints.NotBlank;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.system.domain.bo.SysUserBo;
@@ -219,4 +220,8 @@ public interface ISysUserService {
      * @return 结果
      */
     List<SysUserVo> selectUserListByDept(Long deptId);
+
+    int updateUserPhone(Long userId , String phonenumber);
+
+    int updateUserEmail(Long userId,  String email);
 }

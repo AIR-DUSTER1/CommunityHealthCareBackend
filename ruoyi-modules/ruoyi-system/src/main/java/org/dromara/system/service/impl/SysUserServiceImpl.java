@@ -28,6 +28,7 @@ import org.dromara.common.mybatis.helper.DataBaseHelper;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.*;
 import org.dromara.system.domain.bo.SysUserBo;
+import org.dromara.system.domain.bo.SysUserProfileBo;
 import org.dromara.system.domain.vo.SysPostVo;
 import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.domain.vo.SysUserExportVo;
@@ -668,5 +669,13 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             .eq(SysUser::getStatus, UserConstants.USER_NORMAL)
             .in(CollUtil.isNotEmpty(deptIds), SysUser::getDeptId, deptIds));
         return BeanUtil.copyToList(list, UserDTO.class);
+    }
+    public int updateUserPhone(Long useId, String phonenumber){
+        return baseMapper.update(null,new LambdaUpdateWrapper<SysUser>().set(SysUser::getPhonenumber,phonenumber).eq(SysUser::getUserId,useId));
+    }
+
+    @Override
+    public int updateUserEmail(Long userId, String email) {
+        return baseMapper.update(null,new LambdaUpdateWrapper<SysUser>().set(SysUser::getEmail,email).eq(SysUser::getUserId,userId));
     }
 }
