@@ -75,7 +75,17 @@ public class SseController implements DisposableBean {
         sseEmitterManager.publishAll(msg);
         return R.ok();
     }
-
+    /**
+     *
+     */
+    @GetMapping(value = "${sse.path}/send/app")
+    public R<Void> sendApp(String msg) {
+//        SseMessageDto dto = new SseMessageDto();
+//        dto.setUserIds(List.of(userId));
+//        dto.setMessage(msg);
+//        sseEmitterManager.publishMessage(msg);
+        return R.ok();
+    }
     /**
      * 清理资源。此方法目前不执行任何操作，但避免因未实现而导致错误
      */

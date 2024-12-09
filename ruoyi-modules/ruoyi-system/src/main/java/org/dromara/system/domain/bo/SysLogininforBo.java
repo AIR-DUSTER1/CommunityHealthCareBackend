@@ -34,6 +34,11 @@ public class SysLogininforBo {
     private String userName;
 
     /**
+     * 用户类型
+     */
+    private String userType;
+
+    /**
      * 客户端
      */
     private String clientKey;

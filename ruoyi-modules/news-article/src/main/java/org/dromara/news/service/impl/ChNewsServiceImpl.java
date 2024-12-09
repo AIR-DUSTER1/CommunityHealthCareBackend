@@ -1,5 +1,7 @@
 package org.dromara.news.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -8,6 +10,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.dromara.common.sse.dto.SseMessageDto;
+import org.dromara.common.sse.utils.SseMessageUtils;
+import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.service.impl.SysUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +23,12 @@ import org.dromara.news.domain.ChNews;
 import org.dromara.news.mapper.ChNewsMapper;
 import org.dromara.news.service.IChNewsService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 新闻信息Service业务层处理
@@ -33,8 +41,8 @@ import java.util.Collection;
 public class ChNewsServiceImpl implements IChNewsService {
 
     private final ChNewsMapper baseMapper;
-    @Autowired
-    private final SysUserServiceImpl userService;
+    private final ScheduledExecutorService scheduledExecutorService;
+
     /**
      * 查询新闻信息
      *
@@ -132,5 +140,48 @@ public class ChNewsServiceImpl implements IChNewsService {
             //TODO 做一些业务上的校验,判断是否需要校验
         }
         return baseMapper.deleteByIds(ids) > 0;
+    }
+
+    /**
+     * 更新新闻状态
+     * @param newsId
+     * @param status
+     * @return
+     */
+    @Override
+    public int updateNewsStatus(Long newsId, String status) {
+        return baseMapper.update(null,
+            new LambdaUpdateWrapper<ChNews>()
+                .set(ChNews::getStatus, status)
+                .eq(ChNews::getNewsId, newsId));
+    }
+
+    @Override
+    public Boolean publishNews(String status,String msg) {
+        List<Long> userIds = new ArrayList<>();
+        if (status.equals("1")){
+            List<String> keys = StpUtil.searchTokenValue("", 0, -1, false);
+            for (String key : keys) {
+                String token = StringUtils.substringAfterLast(key, ":");
+                if (StpUtil.stpLogic.getTokenActiveTimeoutByToken(token) < -1) {
+                    continue;
+                }
+                String idObj = (String) StpUtil.getLoginIdByToken(token);
+                Long id = Long.valueOf(StringUtils.substringAfterLast(idObj, ":"));
+                String userType = StringUtils.substringBefore(idObj, ":");
+                if (!userType.equals("sys_user")) {
+                    userIds.add(id);
+                }
+            }
+            scheduledExecutorService.schedule(() -> {
+                SseMessageDto dto = new SseMessageDto();
+                dto.setMessage(msg);
+                dto.setUserIds(userIds);
+                SseMessageUtils.publishMessage(dto);
+            }, 5, TimeUnit.SECONDS);
+            return true;
+        }else{
+            return false;
+        }
     }
 }

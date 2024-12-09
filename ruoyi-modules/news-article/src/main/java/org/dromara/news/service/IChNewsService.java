@@ -1,5 +1,6 @@
 package org.dromara.news.service;
 
+import jakarta.validation.constraints.NotNull;
 import org.dromara.news.domain.vo.ChNewsVo;
 import org.dromara.news.domain.bo.ChNewsBo;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -65,4 +66,14 @@ public interface IChNewsService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    /**
+     * 更新新闻状态
+     * @param newsId
+     * @param status
+     * @return
+     */
+    int updateNewsStatus(Long newsId, String status);
+
+    Boolean publishNews(String status,String msg);
 }

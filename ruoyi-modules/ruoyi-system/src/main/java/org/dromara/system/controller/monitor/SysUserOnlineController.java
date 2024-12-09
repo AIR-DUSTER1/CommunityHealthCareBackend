@@ -51,6 +51,8 @@ public class SysUserOnlineController extends BaseController {
             if (StpUtil.stpLogic.getTokenActiveTimeoutByToken(token) < -1) {
                 continue;
             }
+            Object id = StpUtil.getLoginIdByToken(token);
+
             userOnlineDTOList.add(RedisUtils.getCacheObject(CacheConstants.ONLINE_TOKEN_KEY + token));
         }
         if (StringUtils.isNotEmpty(ipaddr) && StringUtils.isNotEmpty(userName)) {

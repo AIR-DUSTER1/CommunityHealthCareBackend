@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 @Slf4j
 public class SseEmitterManager {
 
+//    private SysClientServiceImpl sysClientService;
     /**
      * 订阅的频道
      */

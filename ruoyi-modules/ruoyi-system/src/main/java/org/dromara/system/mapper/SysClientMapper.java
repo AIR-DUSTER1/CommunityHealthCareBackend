@@ -13,5 +13,5 @@ import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
  */
 @Mapper
 public interface SysClientMapper extends BaseMapperPlus<SysClient, SysClientVo> {
-
+    String getClientId(String deviceType);
 }

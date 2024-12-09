@@ -1,11 +1,23 @@
 package org.dromara.news.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import cn.dev33.satoken.stp.StpUtil;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.dromara.common.core.constant.CacheConstants;
+import org.dromara.common.core.utils.StringUtils;
+import org.dromara.common.redis.utils.RedisUtils;
+import org.dromara.common.sse.dto.SseMessageDto;
+import org.dromara.common.sse.utils.SseMessageUtils;
+import org.dromara.news.domain.bo.ChNewsStatusBo;
+import org.dromara.system.domain.bo.SysUserBo;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
@@ -31,11 +43,10 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/news/news")
+@RequestMapping("/news")
 public class ChNewsController extends BaseController {
 
     private final IChNewsService chNewsService;
-
     /**
      * 查询新闻信息列表
      */
@@ -76,6 +87,8 @@ public class ChNewsController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody ChNewsBo bo) {
+        String status = bo.getStatus();
+        chNewsService.publishNews(status,bo.getTitle()+"已发布请及时查看");
         return toAjax(chNewsService.insertByBo(bo));
     }
 
@@ -101,5 +114,18 @@ public class ChNewsController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] newsIds) {
         return toAjax(chNewsService.deleteWithValidByIds(List.of(newsIds), true));
+    }
+
+    /**
+     * 更新新闻状态
+     * @param bo
+     */
+    @SaCheckPermission("news:news:edit")
+    @Log(title = "新闻信息", businessType = BusinessType.UPDATE)
+    @RepeatSubmit()
+    @PutMapping("/changeStatus")
+    public R<Void> changeStatus(@RequestBody ChNewsStatusBo bo) {
+        chNewsService.publishNews(bo.getStatus(), bo.getTitle()+"已发布请及时查看");
+        return toAjax(chNewsService.updateNewsStatus(bo.getNewsId(), bo.getStatus()));
     }
 }
