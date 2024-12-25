@@ -19,6 +19,7 @@ import org.dromara.common.core.domain.model.RegisterBody;
 import org.dromara.common.core.domain.model.SocialLoginBody;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.encrypt.annotation.ApiEncrypt;
+import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.social.config.properties.SocialLoginConfigProperties;
@@ -80,6 +81,7 @@ public class AuthController {
      * @return 结果
      */
     @ApiEncrypt
+    @RepeatSubmit
     @PostMapping("/login")
     public R<LoginVo> login(@RequestBody String body) {
         LoginBody loginBody = JsonUtils.parseObject(body, LoginBody.class);
@@ -176,15 +178,29 @@ public class AuthController {
     }
 
     /**
-     * 用户注册
+     * 后台用户注册
      */
     @ApiEncrypt
+    @RepeatSubmit
     @PostMapping("/register")
     public R<Void> register(@Validated @RequestBody RegisterBody user) {
         if (!configService.selectRegisterEnabled(user.getTenantId())) {
             return R.fail("当前系统没有开启注册功能！");
         }
         registerService.register(user);
+        return R.ok();
+    }
+
+    /**
+     * 前台用户注册
+     * @param user
+     * @return
+     */
+    @ApiEncrypt
+    @RepeatSubmit
+    @PostMapping("/app/register")
+    public R<Void> AppRegister(@Validated @RequestBody RegisterBody user) {
+        registerService.AppRegister(user);
         return R.ok();
     }
 

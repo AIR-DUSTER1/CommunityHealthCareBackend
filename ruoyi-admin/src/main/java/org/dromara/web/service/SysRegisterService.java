@@ -37,6 +37,18 @@ public class SysRegisterService {
     private final SysUserMapper userMapper;
     private final CaptchaProperties captchaProperties;
 
+    public void AppRegister(RegisterBody registerBody) {
+        String username = registerBody.getUsername();
+        String password = registerBody.getPassword();
+        // 校验用户类型是否存在
+        String userType = UserType.getUserType(registerBody.getUserType()).getUserType();
+
+        boolean captchaEnabled = captchaProperties.getEnable();
+        // 验证码开关
+        if (captchaEnabled) {
+
+        }
+    }
     /**
      * 注册
      */

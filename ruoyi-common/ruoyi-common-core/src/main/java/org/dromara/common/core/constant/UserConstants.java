@@ -12,6 +12,7 @@ public interface UserConstants {
      */
     String SYS_USER = "SYS_USER";
 
+    String APP_USER = "APP_USER";
     /**
      * 正常状态
      */
