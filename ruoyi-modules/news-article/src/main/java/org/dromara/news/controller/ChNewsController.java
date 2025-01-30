@@ -13,8 +13,6 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.dromara.common.core.constant.CacheConstants;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.redis.utils.RedisUtils;
-import org.dromara.common.sse.dto.SseMessageDto;
-import org.dromara.common.sse.utils.SseMessageUtils;
 import org.dromara.news.domain.bo.ChNewsStatusBo;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.springframework.data.repository.query.Param;

@@ -6,21 +6,27 @@ import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.request.AuthRequest;
 import me.zhyd.oauth.utils.AuthStateUtils;
+import org.dromara.common.core.constant.GlobalConstants;
 import org.dromara.common.core.constant.UserConstants;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.core.domain.model.LoginBody;
 import org.dromara.common.core.domain.model.RegisterBody;
 import org.dromara.common.core.domain.model.SocialLoginBody;
+import org.dromara.common.core.enums.UserType;
+import org.dromara.common.core.exception.user.CaptchaException;
+import org.dromara.common.core.exception.user.CaptchaExpireException;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.encrypt.annotation.ApiEncrypt;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.json.utils.JsonUtils;
+import org.dromara.common.redis.utils.RedisUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.social.config.properties.SocialLoginConfigProperties;
 import org.dromara.common.social.config.properties.SocialProperties;
@@ -29,12 +35,14 @@ import org.dromara.common.sse.dto.SseMessageDto;
 import org.dromara.common.sse.utils.SseMessageUtils;
 import org.dromara.common.tenant.helper.TenantHelper;
 import org.dromara.system.domain.bo.SysTenantBo;
+import org.dromara.system.domain.bo.SysUserPhoneBo;
 import org.dromara.system.domain.vo.SysClientVo;
 import org.dromara.system.domain.vo.SysTenantVo;
 import org.dromara.system.service.ISysClientService;
 import org.dromara.system.service.ISysConfigService;
 import org.dromara.system.service.ISysSocialService;
 import org.dromara.system.service.ISysTenantService;
+import org.dromara.web.domain.bo.LoginPhoneBo;
 import org.dromara.web.domain.vo.LoginTenantVo;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.domain.vo.TenantListVo;
@@ -49,6 +57,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -102,13 +111,15 @@ public class AuthController {
         // 登录
         LoginVo loginVo = IAuthStrategy.login(body, client, grantType);
 
-        Long userId = LoginHelper.getUserId();
-        scheduledExecutorService.schedule(() -> {
-            SseMessageDto dto = new SseMessageDto();
-            dto.setMessage("欢迎登录社区康养后台管理系统");
-            dto.setUserIds(List.of(userId));
-            SseMessageUtils.publishMessage(dto);
-        }, 5, TimeUnit.SECONDS);
+        if (LoginHelper.getUserType().equals(UserType.SYS_USER)) {
+            Long userId = LoginHelper.getUserId();
+            scheduledExecutorService.schedule(() -> {
+                SseMessageDto dto = new SseMessageDto();
+                dto.setMessage("欢迎登录社区康养后台管理系统");
+                dto.setUserIds(List.of(userId));
+                SseMessageUtils.publishMessage(dto);
+            }, 5, TimeUnit.SECONDS);
+        }
         return R.ok(loginVo);
     }
 
@@ -246,5 +257,4 @@ public class AuthController {
         result.setVoList(CollUtil.isNotEmpty(list) ? list : voList);
         return R.ok(result);
     }
-
 }

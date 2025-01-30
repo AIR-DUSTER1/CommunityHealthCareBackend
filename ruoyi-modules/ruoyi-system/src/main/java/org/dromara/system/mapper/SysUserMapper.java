@@ -90,4 +90,18 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
     })
     int updateById(@Param(Constants.ENTITY) SysUser user);
 
+    /**
+     * 插入账户信息
+     * @param userName
+     * @param userId
+     * @return
+     */
+    int insertAccount(@Param("userName") String userName, @Param("userId") Long userId);
+
+    /**
+     * 根据用户id查询账户信息
+     * @param userId
+     * @return
+     */
+    int selectAccountByUserId(@Param("userId") Long userId);
 }

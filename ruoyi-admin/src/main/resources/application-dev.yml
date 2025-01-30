@@ -8,7 +8,7 @@ spring.boot.admin.client:
     metadata:
       username: ${spring.boot.admin.client.username}
       userpassword: ${spring.boot.admin.client.password}
-  username: ruoyi
+  username: admin
   password: ${SPRING_BOOT_ADMIN_PASSWORD}
 
 --- # snail-job 配置
@@ -173,7 +173,7 @@ sms:
       access-key-id: ${SMS_ACCESS_KEY_ID}
       # 称为accessSecret有些称之为apiSecret
       access-key-secret: ${SMS_ACCESS_KEY_SECRET}
-      signature: 飞鸟校园
+      signature: 社区康养
       sdk-app-id: 您的sdkAppId
     config2:
       # 厂商标识，标定此配置是哪个厂商，详细请看厂商标识介绍部分

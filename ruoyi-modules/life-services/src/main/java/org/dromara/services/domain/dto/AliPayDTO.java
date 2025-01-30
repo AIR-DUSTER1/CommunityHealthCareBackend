@@ -4,12 +4,13 @@ import lombok.Data;
 
 @Data
 public class AliPayDTO {
+
     /**
      * 总金额
      */
     private String totalAmount;
     /**
-     *
+     *  账户id
      */
-    private String cardNo;
+    private Long accountId;
 }

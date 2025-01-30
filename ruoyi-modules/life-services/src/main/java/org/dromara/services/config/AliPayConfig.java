@@ -1,6 +1,8 @@
 package org.dromara.services.config;
 
+
 import com.alipay.api.*;
+import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "alipay")
 public class AliPayConfig {
 	/**
 	 * 应用APPID
@@ -29,7 +30,7 @@ public class AliPayConfig {
 	 */
 	private String alipayPublicKey;
 	/**
-	 * 支付宝回调地址
+	 * 支付宝异步回调地址
 	 */
 	private String notifyUrl;
 	/**

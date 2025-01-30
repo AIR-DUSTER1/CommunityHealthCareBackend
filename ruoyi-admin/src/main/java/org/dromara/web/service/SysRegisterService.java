@@ -22,6 +22,8 @@ import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.mapper.SysUserMapper;
 import org.dromara.system.service.ISysUserService;
+import org.dromara.web.domain.vo.LoginVo;
+import org.dromara.web.service.impl.PasswordAuthStrategy;
 import org.springframework.stereotype.Service;
 
 /**
@@ -38,6 +40,7 @@ public class SysRegisterService {
     private final CaptchaProperties captchaProperties;
 
     public void AppRegister(RegisterBody registerBody) {
+        String tenantId = "000000";
         String username = registerBody.getUsername();
         String password = registerBody.getPassword();
         // 校验用户类型是否存在
@@ -46,8 +49,23 @@ public class SysRegisterService {
         boolean captchaEnabled = captchaProperties.getEnable();
         // 验证码开关
         if (captchaEnabled) {
-
+            validateCaptcha(tenantId, username, registerBody.getCode(), registerBody.getUuid());
         }
+        SysUserBo sysUser = new SysUserBo();
+        sysUser.setUserName(username);
+        sysUser.setNickName(username);
+        sysUser.setPassword(BCrypt.hashpw(password));
+        sysUser.setUserType(userType);
+        boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUser>()
+            .eq(SysUser::getUserName, sysUser.getUserName()));
+        if (exist) {
+            throw new UserException("user.register.save.error", username);
+        }
+        boolean regFlag = userService.registerUser(sysUser, tenantId);
+        if (!regFlag) {
+            throw new UserException("user.register.error");
+        }
+        recordLogininfor(tenantId, username, Constants.REGISTER, MessageUtils.message("user.register.success"));
     }
     /**
      * 注册

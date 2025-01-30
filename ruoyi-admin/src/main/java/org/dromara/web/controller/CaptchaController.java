@@ -62,7 +62,7 @@ public class CaptchaController {
         String code = RandomUtil.randomNumbers(4);
         RedisUtils.setCacheObject(key, code, Duration.ofMinutes(Constants.CAPTCHA_EXPIRATION));
         // 验证码模板id 自行处理 (查数据库或写死均可)
-        String templateId = "SMS_473325185";
+        String templateId = "SMS_478415509";
         LinkedHashMap<String, String> map = new LinkedHashMap<>(1);
         map.put("code", code);
         SmsBlend smsBlend = SmsFactory.getSmsBlend("config1");

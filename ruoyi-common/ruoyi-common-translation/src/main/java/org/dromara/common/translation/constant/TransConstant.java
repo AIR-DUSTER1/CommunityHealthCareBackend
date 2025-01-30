@@ -31,5 +31,4 @@ public interface TransConstant {
      * ossId转url
      */
     String OSS_ID_TO_URL = "oss_id_to_url";
-
 }

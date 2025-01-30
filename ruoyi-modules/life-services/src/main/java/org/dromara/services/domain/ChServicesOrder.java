@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
+import java.math.BigDecimal;
 
 /**
  * 服务订单对象 ch_services_order
@@ -50,7 +51,7 @@ public class ChServicesOrder extends BaseEntity {
     /**
      * 订单金额
      */
-    private Long price;
+    private BigDecimal price;
 
     /**
      * 订单备注
@@ -71,6 +72,9 @@ public class ChServicesOrder extends BaseEntity {
      * 订单状态
      */
     private String status;
-
+    /**
+     * 支付流水号
+     */
+    private String traceNo;
 
 }

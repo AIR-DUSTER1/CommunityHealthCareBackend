@@ -1,5 +1,6 @@
 package org.dromara.web.service.impl;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -12,6 +13,7 @@ import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.domain.model.SmsLoginBody;
 import org.dromara.common.core.enums.LoginType;
 import org.dromara.common.core.enums.UserStatus;
+import org.dromara.common.core.enums.UserType;
 import org.dromara.common.core.exception.user.CaptchaExpireException;
 import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.MessageUtils;
@@ -29,6 +31,8 @@ import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
 import org.dromara.web.service.SysLoginService;
 import org.springframework.stereotype.Service;
+
+import java.util.Random;
 
 /**
  * 短信认证策略
@@ -91,12 +95,37 @@ public class SmsAuthStrategy implements IAuthStrategy {
         SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
         if (ObjectUtil.isNull(user)) {
             log.info("登录用户：{} 不存在.", phonenumber);
-            throw new UserException("user.not.exists", phonenumber);
+            return autoRegisterUser(phonenumber);
+//            throw new UserException("user.not.exists", phonenumber);
         } else if (UserStatus.DISABLE.getCode().equals(user.getStatus())) {
             log.info("登录用户：{} 已被停用.", phonenumber);
             throw new UserException("user.blocked", phonenumber);
         }
         return user;
     }
+    private SysUserVo autoRegisterUser(String phonenumber) {
+        SysUser newUser = new SysUser();
+        newUser.setPhonenumber(phonenumber);
+        newUser.setNickName(phonenumber);
+        newUser.setUserType(UserType.APP_USER.getUserType());
+        newUser.setUserName(phonenumber); // 可以根据需求设置用户名
+        newUser.setPassword(generateRandomPassword(10)); // 生成随机密码
+        newUser.setStatus(String.valueOf(UserStatus.OK.getCode())); // 设置用户状态为正常
+        userMapper.insert(newUser);
 
+        // 获取新注册用户的详细信息
+        return userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
+    }
+    private String generateRandomPassword(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ${SA_TOKEN_JWT_SECRET}0123456789";
+        Random random = new Random();
+        StringBuilder password = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            password.append(characters.charAt(index));
+        }
+
+        return password.toString();
+    }
 }
