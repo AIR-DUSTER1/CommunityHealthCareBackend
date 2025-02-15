@@ -51,7 +51,15 @@ public class ChNewsServiceImpl implements IChNewsService {
      */
     @Override
     public ChNewsVo queryById(Long newsId){
-        return baseMapper.selectVoById(newsId);
+        ChNewsVo chNewsVo = baseMapper.selectVoById(newsId);
+        if (chNewsVo != null) {
+            ChNews chNews = MapstructUtils.convert(chNewsVo, ChNews.class);
+            if (chNews != null) {
+                chNews.setViews(chNewsVo.getViews() + 1);
+                baseMapper.updateById(chNews);
+            }
+        }
+        return chNewsVo;
     }
 
     /**

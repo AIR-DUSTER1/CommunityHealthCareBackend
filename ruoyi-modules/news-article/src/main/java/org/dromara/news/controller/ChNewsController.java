@@ -1,21 +1,16 @@
 package org.dromara.news.controller;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 
-import cn.dev33.satoken.stp.StpUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.common.unipush.handler.UniPushHandler;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import org.dromara.common.core.constant.CacheConstants;
-import org.dromara.common.core.utils.StringUtils;
-import org.dromara.common.redis.utils.RedisUtils;
 import org.dromara.news.domain.bo.ChNewsStatusBo;
-import org.dromara.system.domain.bo.SysUserBo;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
@@ -38,6 +33,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
  * @author AIR-DUSTER1
  * @date 2024-11-27
  */
+@Slf4j
 @Validated
 @RequiredArgsConstructor
 @RestController
@@ -45,6 +41,8 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 public class ChNewsController extends BaseController {
 
     private final IChNewsService chNewsService;
+
+    private final UniPushHandler uniPushHandler;
     /**
      * 查询新闻信息列表
      */
@@ -122,8 +120,18 @@ public class ChNewsController extends BaseController {
     @Log(title = "新闻信息", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/changeStatus")
-    public R<Void> changeStatus(@RequestBody ChNewsStatusBo bo) {
-        chNewsService.publishNews(bo.getStatus(), bo.getTitle()+"已发布请及时查看");
+    public R<Void> changeStatus(@RequestBody ChNewsStatusBo bo) throws IOException {
+        if (Objects.equals(bo.getStatus(), "1")) {
+            String send = uniPushHandler.send("", bo.getTitle(), "已发布请及时查看");
+            log.info("推送结果{}", send);
+            if (Objects.equals(send, "uni-cloud-push-error-20001")){
+                return R.fail("通知发布标题或内容重复");
+            }
+            if (!Objects.equals(send, "0") ) {
+                return R.fail("推送失败");
+            }
+        }
+//        chNewsService.publishNews(bo.getStatus(), bo.getTitle()+"已发布请及时查看");
         return toAjax(chNewsService.updateNewsStatus(bo.getNewsId(), bo.getStatus()));
     }
 }

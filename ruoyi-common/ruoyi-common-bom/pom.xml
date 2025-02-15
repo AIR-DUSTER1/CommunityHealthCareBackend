@@ -178,7 +178,11 @@
                 <artifactId>ruoyi-common-sse</artifactId>
                 <version>${revision}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>common-unipush</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -121,7 +121,8 @@ security:
     # swagger 文档配置
     - /*/api-docs
     - /*/api-docs/**
-
+    # 接口
+    - /alipay/notify
 # 多租户配置
 tenant:
   # 是否开启

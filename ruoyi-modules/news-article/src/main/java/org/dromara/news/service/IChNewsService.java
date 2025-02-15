@@ -76,4 +76,5 @@ public interface IChNewsService {
     int updateNewsStatus(Long newsId, String status);
 
     Boolean publishNews(String status,String msg);
+
 }

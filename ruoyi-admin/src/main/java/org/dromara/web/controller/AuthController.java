@@ -5,6 +5,7 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.http.useragent.OS;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -54,10 +55,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -111,14 +109,17 @@ public class AuthController {
         // 登录
         LoginVo loginVo = IAuthStrategy.login(body, client, grantType);
 
-        if (LoginHelper.getUserType().equals(UserType.SYS_USER)) {
-            Long userId = LoginHelper.getUserId();
-            scheduledExecutorService.schedule(() -> {
-                SseMessageDto dto = new SseMessageDto();
-                dto.setMessage("欢迎登录社区康养后台管理系统");
-                dto.setUserIds(List.of(userId));
-                SseMessageUtils.publishMessage(dto);
-            }, 5, TimeUnit.SECONDS);
+        if (LoginHelper.isLogin()) {
+            String os = LoginHelper.getLoginUser().getOs();
+            if ("Android".equals(os) || "iOS".equals(os)) {
+                Long userId = LoginHelper.getUserId();
+                scheduledExecutorService.schedule(() -> {
+                    SseMessageDto dto = new SseMessageDto();
+                    dto.setMessage("欢迎登录社区康养后台管理系统");
+                    dto.setUserIds(List.of(userId));
+                    SseMessageUtils.publishMessage(dto);
+                }, 5, TimeUnit.SECONDS);
+            }
         }
         return R.ok(loginVo);
     }
