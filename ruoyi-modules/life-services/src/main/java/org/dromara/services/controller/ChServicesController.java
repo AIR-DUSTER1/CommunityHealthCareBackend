@@ -2,11 +2,13 @@ package org.dromara.services.controller;
 
 import java.util.List;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.dromara.services.domain.bo.ChServicesStatusBo;
+import org.dromara.services.domain.vo.Category;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
@@ -119,5 +121,16 @@ public class ChServicesController extends BaseController {
             return R.fail("服务状态更新失败");
         }
         return toAjax(chServicesService.updateStatus(bo));
+    }
+
+    /**
+     * 服务分类查询
+     * @param type
+     * @return
+     */
+    @SaIgnore
+    @GetMapping("/category")
+    public R<List<Category>> queryCategory(String type){
+        return R.ok(chServicesService.queryCategory(type));
     }
 }

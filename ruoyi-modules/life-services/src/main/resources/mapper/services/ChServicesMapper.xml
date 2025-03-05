@@ -4,4 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.dromara.services.mapper.ChServicesMapper">
 
+    <select id="selectClassification" resultType="java.lang.String">
+        SELECT dict_value FROM `sys_dict_data` WHERE dict_type = 'ch_services_classification'
+    </select>
 </mapper>

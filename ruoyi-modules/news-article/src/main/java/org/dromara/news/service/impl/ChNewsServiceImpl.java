@@ -23,10 +23,7 @@ import org.dromara.news.domain.ChNews;
 import org.dromara.news.mapper.ChNewsMapper;
 import org.dromara.news.service.IChNewsService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -107,6 +104,10 @@ public class ChNewsServiceImpl implements IChNewsService {
     @Override
     public Boolean insertByBo(ChNewsBo bo) {
         ChNews add = MapstructUtils.convert(bo, ChNews.class);
+        String slug = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        if (add != null) {
+            add.setSlug(slug);
+        }
         validEntityBeforeSave(add);
         boolean flag = baseMapper.insert(add) > 0;
         if (flag) {

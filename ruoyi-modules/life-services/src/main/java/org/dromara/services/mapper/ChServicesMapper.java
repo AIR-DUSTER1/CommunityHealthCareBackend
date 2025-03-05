@@ -5,6 +5,8 @@ import org.dromara.services.domain.ChServices;
 import org.dromara.services.domain.vo.ChServicesVo;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
 
+import java.util.List;
+
 /**
  * 生活服务Mapper接口
  *
@@ -14,4 +16,5 @@ import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
 @Mapper
 public interface ChServicesMapper extends BaseMapperPlus<ChServices, ChServicesVo> {
 
+    List<String> selectClassification();
 }

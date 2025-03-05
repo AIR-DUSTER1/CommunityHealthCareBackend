@@ -31,7 +31,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/services/servicesAccount")
+@RequestMapping("/services/account")
 public class ChServicesAccountController extends BaseController {
 
     private final IChServicesAccountService chServicesAccountService;
@@ -101,5 +101,15 @@ public class ChServicesAccountController extends BaseController {
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] accountIds) {
         return toAjax(chServicesAccountService.deleteWithValidByIds(List.of(accountIds), true));
+    }
+
+    /**
+     * 根据用户id获取账户id
+     * @param userId
+     * @return
+     */
+    @GetMapping("/getAccountIdByUserId")
+    public R<Long> getAccountIdByUserId(Long userId) {
+        return R.ok(chServicesAccountService.getAccountIdByUserId(userId));
     }
 }

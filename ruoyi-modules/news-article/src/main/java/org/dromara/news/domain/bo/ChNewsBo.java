@@ -56,7 +56,10 @@ public class ChNewsBo extends BaseEntity {
      */
     @NotBlank(message = "内容不能为空", groups = { AddGroup.class, EditGroup.class })
     private String content;
-
+    /**
+     * 新闻标记
+     */
+    private String slug;
     /**
      * 状态
      */

@@ -312,6 +312,9 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     public int insertUser(SysUserBo user) {
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 新增用户信息
+        if (sysUser != null && sysUser.getAvatar() == null) {
+            sysUser.setAvatar(1894654441492389889L);
+        }
         int rows = baseMapper.insert(sysUser);
         user.setUserId(sysUser.getUserId());
         // 新增用户岗位关联

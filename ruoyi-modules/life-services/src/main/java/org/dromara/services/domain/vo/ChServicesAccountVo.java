@@ -56,7 +56,12 @@ public class ChServicesAccountVo implements Serializable {
      */
     @ExcelProperty(value = "冻结金额")
     private Long freezeBalance;
-
+    /**
+     * 身体状态
+     */
+    @ExcelProperty(value = "账户状态", converter = ExcelDictConvert.class)
+    @ExcelDictFormat(dictType = "ch_services_account_physical_condition")
+    private String physicalCondition;
     /**
      * 账户状态
      */

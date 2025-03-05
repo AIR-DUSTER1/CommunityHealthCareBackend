@@ -50,7 +50,10 @@ public class ChServicesAccount extends BaseEntity {
      */
     @TableField(value = "freeze_balance")
     private BigDecimal freezeBalance;
-
+    /**
+     * 身体状态
+     */
+    private String physicalCondition;
     /**
      * 账户状态
      */

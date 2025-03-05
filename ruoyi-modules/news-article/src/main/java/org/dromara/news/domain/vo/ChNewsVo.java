@@ -64,7 +64,10 @@ public class ChNewsVo implements Serializable {
      */
     @ExcelProperty(value = "内容")
     private String content;
-
+    /**
+     * 新闻标记
+     */
+    private String slug;
     /**
      * 浏览量
      */

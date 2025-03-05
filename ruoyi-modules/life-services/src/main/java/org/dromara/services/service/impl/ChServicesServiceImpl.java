@@ -2,6 +2,7 @@ package org.dromara.services.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.common.sse.dto.SseMessageDto;
 import org.dromara.common.sse.utils.SseMessageUtils;
 import org.dromara.services.domain.bo.ChServicesStatusBo;
+import org.dromara.services.domain.vo.Category;
+import org.dromara.services.domain.vo.ServicesItemVo;
 import org.springframework.stereotype.Service;
 import org.dromara.services.domain.bo.ChServicesBo;
 import org.dromara.services.domain.vo.ChServicesVo;
@@ -20,10 +23,7 @@ import org.dromara.services.domain.ChServices;
 import org.dromara.services.mapper.ChServicesMapper;
 import org.dromara.services.service.IChServicesService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -184,5 +184,34 @@ public class ChServicesServiceImpl implements IChServicesService {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public List<Category> queryCategory(String type) {
+        List<Category> res = new ArrayList<>();
+        List<String> categorys = baseMapper.selectClassification();
+        if (CollectionUtils.isEmpty(categorys)){
+
+        }
+        for (String category : categorys) {
+            Category c = new Category();
+            List<ServicesItemVo> items = new ArrayList<>();
+            c.setName(category);
+            List<ChServicesVo> vos = baseMapper.selectVoList(new LambdaQueryWrapper<ChServices>().eq(ChServices::getClassification, category));
+            vos.forEach(r ->{
+                if (r.getType().equals(type)){
+                    ServicesItemVo vo = new ServicesItemVo();
+                    vo.setServicesId(r.getServicesId());
+                    vo.setName(r.getName());
+                    vo.setKey(r.getName());
+                    vo.setIcon(r.getIcon());
+                    vo.setPrice(r.getPrice());
+                    items.add(vo);
+                }
+            });
+            c.setServices(items);
+            res.add(c);
+        }
+        return res;
     }
 }

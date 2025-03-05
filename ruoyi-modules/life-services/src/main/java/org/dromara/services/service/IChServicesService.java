@@ -3,6 +3,7 @@ package org.dromara.services.service;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.dromara.services.domain.bo.ChServicesStatusBo;
+import org.dromara.services.domain.vo.Category;
 import org.dromara.services.domain.vo.ChServicesVo;
 import org.dromara.services.domain.bo.ChServicesBo;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -77,4 +78,6 @@ public interface IChServicesService {
     int updateStatus(ChServicesStatusBo bo);
 
     Boolean publishNews(@NotNull(message = "状态不能为空") String status, @NotBlank(message = "服务名称不能为空") String name);
+
+    List<Category> queryCategory(String type);
 }

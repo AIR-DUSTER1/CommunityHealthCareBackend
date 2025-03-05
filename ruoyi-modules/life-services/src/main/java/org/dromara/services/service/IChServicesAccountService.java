@@ -65,4 +65,6 @@ public interface IChServicesAccountService {
      * @return 是否删除成功
      */
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+
+    Long getAccountIdByUserId(Long userId);
 }

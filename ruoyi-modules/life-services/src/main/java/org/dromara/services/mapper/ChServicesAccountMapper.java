@@ -14,4 +14,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface ChServicesAccountMapper extends BaseMapperPlus<ChServicesAccount, ChServicesAccountVo> {
     String selectUserByUserId(Long userId);
     int selectAccountByUserId(Long userId);
+    Long selectAccountIdByUserId(Long userId);
 }

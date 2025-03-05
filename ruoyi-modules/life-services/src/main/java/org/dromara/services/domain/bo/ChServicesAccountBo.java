@@ -45,7 +45,10 @@ public class ChServicesAccountBo extends BaseEntity {
      * 冻结金额
      */
     private Long freezeBalance = 0L;
-
+    /**
+     * 身体状态
+     */
+    private String physicalCondition;
     /**
      * 账户状态
      */

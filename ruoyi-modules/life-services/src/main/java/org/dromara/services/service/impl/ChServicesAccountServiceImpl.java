@@ -1,7 +1,6 @@
 package org.dromara.services.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -11,8 +10,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
-import org.dromara.common.redis.utils.RedisUtils;
-import org.dromara.services.domain.ChPayConfig;
 import org.dromara.services.domain.ChUserAccount;
 import org.dromara.services.mapper.ChUserAccountMapper;
 import org.springframework.stereotype.Service;
@@ -81,6 +78,7 @@ public class ChServicesAccountServiceImpl implements IChServicesAccountService {
         LambdaQueryWrapper<ChServicesAccount> lqw = Wrappers.lambdaQuery();
         lqw.like(StringUtils.isNotBlank(bo.getAccountName()), ChServicesAccount::getAccountName, bo.getAccountName());
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()), ChServicesAccount::getStatus, bo.getStatus());
+        lqw.eq(StringUtils.isNotBlank(bo.getPhysicalCondition()), ChServicesAccount::getPhysicalCondition, bo.getPhysicalCondition());
         lqw.eq(StringUtils.isNotBlank(bo.getRealNameStatus()), ChServicesAccount::getRealNameStatus, bo.getRealNameStatus());
         return lqw;
     }
@@ -175,6 +173,12 @@ public class ChServicesAccountServiceImpl implements IChServicesAccountService {
         return baseMapper.update(null, new LambdaUpdateWrapper<ChServicesAccount>()
             .set(ChServicesAccount::getStatus, "2")) > 0;
     }
+
+    @Override
+    public Long getAccountIdByUserId(Long userId) {
+        return baseMapper.selectAccountIdByUserId(userId);
+    }
+
     public void updatePrice(Long userId, BigDecimal price,boolean isAdd){
         ChServicesAccount chServicesAccount = baseMapper.selectOne(new LambdaQueryWrapper<ChServicesAccount>().eq(ChServicesAccount::getUserId, userId));
         if (isAdd){
