@@ -134,4 +134,9 @@ public class ChNewsController extends BaseController {
 //        chNewsService.publishNews(bo.getStatus(), bo.getTitle()+"已发布请及时查看");
         return toAjax(chNewsService.updateNewsStatus(bo.getNewsId(), bo.getStatus()));
     }
+    @GetMapping("/post/{slug}")
+    public R<ChNewsVo> getNews(
+                          @PathVariable String slug) {
+        return R.ok(chNewsService.getNews(slug));
+    }
 }

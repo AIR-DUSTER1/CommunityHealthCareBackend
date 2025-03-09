@@ -1,25 +1,28 @@
 package org.dromara.system.domain;
 
-import com.baomidou.mybatisplus.annotation.*;
 import org.dromara.common.core.constant.UserConstants;
 import org.dromara.common.tenant.core.TenantEntity;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.io.Serial;
 
 /**
- * 用户对象 sys_user
+ * 用户信息对象 sys_user
  *
- * @author Lion Li
+ * @author AirDuster1
+ * @date 2025-03-07
  */
-
 @Data
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_user")
 public class SysUser extends TenantEntity {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * 用户ID
@@ -43,9 +46,44 @@ public class SysUser extends TenantEntity {
     private String nickName;
 
     /**
+     * 偏好服务时间
+     */
+    private String preferredServiceTime;
+
+    /**
      * 用户类型（sys_user系统用户）
      */
     private String userType;
+
+    /**
+     * 是否独居
+     */
+    private String livingAlone;
+
+    /**
+     * 婚姻状况
+     */
+    private String maritalStatus;
+
+    /**
+     * 紧急联系人
+     */
+    private String emergencyPhone;
+
+    /**
+     * 慢性病信息
+     */
+    private String chronicDiseases;
+
+    /**
+     * 健康状况
+     */
+    private String healthStatus;
+
+    /**
+     * 详细地址
+     */
+    private String address;
 
     /**
      * 用户邮箱
@@ -55,17 +93,27 @@ public class SysUser extends TenantEntity {
     /**
      * 手机号码
      */
-    private String phonenumber;
+    private String phoneNumber;
 
     /**
-     * 用户性别
+     * 用户性别（0男 1女 2未知）
      */
     private String sex;
 
     /**
-     * 用户头像
+     * 头像地址
      */
     private Long avatar;
+
+    /**
+     * 年龄
+     */
+    private Long age;
+
+    /**
+     * 出生日期
+     */
+    private Date birthDate;
 
     /**
      * 密码
@@ -102,8 +150,8 @@ public class SysUser extends TenantEntity {
      * 备注
      */
     private String remark;
-
-
+    public SysUser() {
+    }
     public SysUser(Long userId) {
         this.userId = userId;
     }
@@ -111,5 +159,4 @@ public class SysUser extends TenantEntity {
     public boolean isSuperAdmin() {
         return UserConstants.SUPER_ADMIN_ID.equals(this.userId);
     }
-
 }

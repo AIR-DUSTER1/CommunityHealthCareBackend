@@ -133,4 +133,15 @@ public class ChServicesController extends BaseController {
     public R<List<Category>> queryCategory(String type){
         return R.ok(chServicesService.queryCategory(type));
     }
+
+    /**
+     * 查询全部
+     * @param type
+     * @return
+     */
+    @SaIgnore
+    @GetMapping("/query/all")
+    public R<List<Category>> queryAll(String type,String name){
+        return R.ok(chServicesService.queryAll(type,name));
+    }
 }

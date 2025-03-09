@@ -1,6 +1,5 @@
 package org.dromara.news.service;
 
-import jakarta.validation.constraints.NotNull;
 import org.dromara.news.domain.vo.ChNewsVo;
 import org.dromara.news.domain.bo.ChNewsBo;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -76,5 +75,5 @@ public interface IChNewsService {
     int updateNewsStatus(Long newsId, String status);
 
     Boolean publishNews(String status,String msg);
-
+    ChNewsVo getNews(String slug);
 }

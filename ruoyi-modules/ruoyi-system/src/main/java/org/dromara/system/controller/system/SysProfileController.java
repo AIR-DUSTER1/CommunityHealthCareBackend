@@ -151,7 +151,7 @@ public class SysProfileController extends BaseController {
         if (StringUtils.isNotEmpty(phoneBo.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
             return R.fail("修改用户'" + username + "'失败，手机号码已存在");
         }
-        return toAjax(userService.updateUserPhone(user.getUserId(), user.getPhonenumber()));
+        return toAjax(userService.updateUserPhone(user.getUserId(), user.getPhoneNumber()));
     }
     @SaCheckLogin
     @RepeatSubmit
@@ -174,7 +174,7 @@ public class SysProfileController extends BaseController {
     @GetMapping("/check/sms")
     public R<Void> checkSmsCode(@NotBlank(message = "{user.phonenumber.not.blank}") String phonenumber, String smsCode) {
         SysUserVo userVo = userService.selectUserById(LoginHelper.getUserId());
-        if (!userVo.getPhonenumber().equalsIgnoreCase(phonenumber)){
+        if (!userVo.getPhoneNumber().equalsIgnoreCase(phonenumber)){
             return R.fail("修改的非本手机号");
         }
         validateSmsCode(phonenumber, smsCode);

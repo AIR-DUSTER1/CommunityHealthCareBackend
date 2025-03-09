@@ -12,10 +12,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.sse.dto.SseMessageDto;
 import org.dromara.common.sse.utils.SseMessageUtils;
-import org.dromara.system.domain.SysUser;
-import org.dromara.system.domain.vo.SysUserVo;
-import org.dromara.system.service.impl.SysUserServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.dromara.news.domain.bo.ChNewsBo;
 import org.dromara.news.domain.vo.ChNewsVo;
@@ -192,5 +188,19 @@ public class ChNewsServiceImpl implements IChNewsService {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public ChNewsVo getNews(String slug) {
+        if (StringUtils.isBlank(slug)) {
+            return null;
+        }
+
+        ChNewsVo chNewsVo = baseMapper.selectVoOne(new LambdaQueryWrapper<ChNews>().eq(ChNews::getSlug, slug));
+        baseMapper.update(null, new LambdaUpdateWrapper<ChNews>()
+            .set(ChNews::getViews, chNewsVo.getViews() + 1)
+            .eq(ChNews::getNewsId, chNewsVo.getNewsId()));
+        ChNewsVo Vo = baseMapper.selectVoOne(new LambdaQueryWrapper<ChNews>().eq(ChNews::getSlug, slug));
+        return Vo;
     }
 }

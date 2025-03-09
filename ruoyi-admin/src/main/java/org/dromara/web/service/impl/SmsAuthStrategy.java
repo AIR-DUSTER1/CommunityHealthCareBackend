@@ -92,11 +92,11 @@ public class SmsAuthStrategy implements IAuthStrategy {
     }
 
     private SysUserVo loadUserByPhonenumber(String phonenumber) {
-        SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
+        SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhoneNumber, phonenumber));
         if (ObjectUtil.isNull(user)) {
             log.info("登录用户：{} 不存在.", phonenumber);
             return autoRegisterUser(phonenumber);
-//            throw new UserException("user.not.exists", phonenumber);
+//            throw new UserException("user.not.exists", phoneNumber);
         } else if (UserStatus.DISABLE.getCode().equals(user.getStatus())) {
             log.info("登录用户：{} 已被停用.", phonenumber);
             throw new UserException("user.blocked", phonenumber);
@@ -105,7 +105,7 @@ public class SmsAuthStrategy implements IAuthStrategy {
     }
     private SysUserVo autoRegisterUser(String phonenumber) {
         SysUser newUser = new SysUser();
-        newUser.setPhonenumber(phonenumber);
+        newUser.setPhoneNumber(phonenumber);
         newUser.setNickName(phonenumber);
         newUser.setUserType(UserType.APP_USER.getUserType());
         newUser.setUserName(phonenumber); // 可以根据需求设置用户名
@@ -114,7 +114,7 @@ public class SmsAuthStrategy implements IAuthStrategy {
         userMapper.insert(newUser);
 
         // 获取新注册用户的详细信息
-        return userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
+        return userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhoneNumber, phonenumber));
     }
     private String generateRandomPassword(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ${SA_TOKEN_JWT_SECRET}0123456789";

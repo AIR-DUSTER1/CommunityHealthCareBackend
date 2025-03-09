@@ -15,7 +15,7 @@
         <module>ruoyi-system</module>
 <!--        <module>ruoyi-workflow</module>-->
         <module>news-article</module>
-<!--        <module>chat-ai</module>-->
+        <module>chat-ai</module>
         <module>life-services</module>
     </modules>
 

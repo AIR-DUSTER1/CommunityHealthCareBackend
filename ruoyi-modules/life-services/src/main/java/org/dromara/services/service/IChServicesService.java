@@ -80,4 +80,5 @@ public interface IChServicesService {
     Boolean publishNews(@NotNull(message = "状态不能为空") String status, @NotBlank(message = "服务名称不能为空") String name);
 
     List<Category> queryCategory(String type);
+    List<Category> queryAll(String type,String name);
 }

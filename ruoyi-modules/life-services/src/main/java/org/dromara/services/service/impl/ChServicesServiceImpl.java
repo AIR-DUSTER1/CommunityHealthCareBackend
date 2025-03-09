@@ -191,13 +191,45 @@ public class ChServicesServiceImpl implements IChServicesService {
         List<Category> res = new ArrayList<>();
         List<String> categorys = baseMapper.selectClassification();
         if (CollectionUtils.isEmpty(categorys)){
-
+            return res;
         }
         for (String category : categorys) {
             Category c = new Category();
             List<ServicesItemVo> items = new ArrayList<>();
             c.setName(category);
             List<ChServicesVo> vos = baseMapper.selectVoList(new LambdaQueryWrapper<ChServices>().eq(ChServices::getClassification, category));
+            vos.forEach(r ->{
+                if (r.getType().equals(type)){
+                    ServicesItemVo vo = new ServicesItemVo();
+                    vo.setServicesId(r.getServicesId());
+                    vo.setName(r.getName());
+                    vo.setKey(r.getName());
+                    vo.setIcon(r.getIcon());
+                    vo.setPrice(r.getPrice());
+                    items.add(vo);
+                }
+            });
+            c.setServices(items);
+            res.add(c);
+        }
+        return res;
+    }
+
+    @Override
+    public List<Category> queryAll(String type, String name) {
+        List<Category> res = new ArrayList<>();
+        List<String> categorys = baseMapper.selectClassification();
+        if (CollectionUtils.isEmpty(categorys)){
+            return res;
+        }
+        for (String category : categorys) {
+            Category c = new Category();
+            List<ServicesItemVo> items = new ArrayList<>();
+            c.setName(category);
+            List<ChServicesVo> vos = baseMapper.selectVoList(new LambdaQueryWrapper<ChServices>().eq(ChServices::getClassification, category).like(ChServices::getName, name));
+            if (vos.isEmpty()) {
+                return res;
+            }
             vos.forEach(r ->{
                 if (r.getType().equals(type)){
                     ServicesItemVo vo = new ServicesItemVo();
