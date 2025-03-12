@@ -18,9 +18,10 @@ import org.dromara.common.core.domain.R;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.pay.config.AliPayConfig;
 import org.dromara.common.redis.utils.QueueUtils;
 import org.dromara.common.web.core.BaseController;
-import org.dromara.services.config.AliPayConfig;
+//import org.dromara.services.config.AliPayConfig;
 import org.dromara.services.domain.ChServices;
 import org.dromara.services.domain.ChServicesOrder;
 import org.dromara.services.domain.bo.ChServicesOrderBo;
@@ -158,7 +159,7 @@ public class AliPayController extends BaseController {
                 ChServicesOrderBo order = new ChServicesOrderBo();
                 order.setTraceNo(params.get("trade_no"));
                 order.setUpdateTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
-                order.setServicesOrderId(Long.valueOf(params.get("out_trade_no")));
+                order.setServicesOrderId(params.get("out_trade_no"));
                 order.setPayStatus("2");//支付成功
                 order.setStatus("3");//已付款
 				orderService.changeOrderStatus(order);

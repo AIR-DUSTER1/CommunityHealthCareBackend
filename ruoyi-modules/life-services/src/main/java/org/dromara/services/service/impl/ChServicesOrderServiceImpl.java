@@ -42,7 +42,7 @@ public class ChServicesOrderServiceImpl implements IChServicesOrderService {
      * @return 服务订单
      */
     @Override
-    public ChServicesOrderVo queryById(Long servicesOrderId){
+    public ChServicesOrderVo queryById(String servicesOrderId){
         return baseMapper.selectVoById(servicesOrderId);
     }
 
@@ -127,6 +127,18 @@ public class ChServicesOrderServiceImpl implements IChServicesOrderService {
      */
     private void validEntityBeforeSave(ChServicesOrder entity){
         //TODO 做一些数据校验,如唯一约束
+        if (entity == null) {
+            return;
+        }
+        if (entity.getUserId() == null){
+            throw new RuntimeException("userId为空");
+        }
+        if (entity.getServiceId() == null){
+            throw new RuntimeException("serviceId为空");
+        }
+        if (entity.getServicesOrderId() == null){
+            throw new RuntimeException("servicesOrderId为空");
+        }
     }
 
     /**

@@ -2,11 +2,14 @@ package org.dromara.chat.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
@@ -38,9 +41,8 @@ public class ChatController {
      * @return Flux<String> types.
      */
     @GetMapping("/stream/chat")
-    public Flux<String> streamChat (HttpServletResponse response) {
-        response.setCharacterEncoding("UTF-8");
-        Flux<ChatResponse> stream = DeepSeekChatModel.stream(new Prompt(DEFAULT_PROMPT));
-        return stream.map(resp -> resp.getResult().getOutput().getContent());
+    public Flux<ServerSentEvent<String>> streamChat (@RequestParam(value = "message", defaultValue = "你好，介绍下你自己吧。") String message) {
+        Flux<ChatResponse> stream = DeepSeekChatModel.stream(new Prompt(new UserMessage(message)));
+        return stream.map(resp -> ServerSentEvent.builder(resp.getResult().getOutput().getContent()).build());
     }
 }

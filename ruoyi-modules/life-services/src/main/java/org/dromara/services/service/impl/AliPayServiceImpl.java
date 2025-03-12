@@ -1,5 +1,6 @@
 package org.dromara.services.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.alipay.api.response.AlipayTradeQueryResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class AliPayServiceImpl implements AliPayService {
     }
     public ChServicesOrderBo createOrderBo(BuyDTO dto, ChServices service) {
         ChServicesOrderBo order = new ChServicesOrderBo();
-        order.setServicesOrderId(Long.valueOf(UUID.randomUUID().toString().replace("-", "").substring(0, 32)));
+        order.setServicesOrderId(UUID.randomUUID().toString().replace("-", "").substring(0, 32));
         order.setUserId(dto.getUserId());
         order.setUserName(userNameByUserId(dto.getUserId()));
         order.setServiceId(dto.getServiceId());
@@ -55,7 +56,7 @@ public class AliPayServiceImpl implements AliPayService {
     }
     public ChServicesOrderBo createOrderBo(PayDTO dto, ChServices service) {
         ChServicesOrderBo order = new ChServicesOrderBo();
-        order.setServicesOrderId(Long.valueOf(UUID.randomUUID().toString().replace("-", "").substring(0, 32)));
+        order.setServicesOrderId(UUID.randomUUID().toString().replace("-", "").substring(0, 32));
         order.setUserId(dto.getUserId());
         order.setUserName(userNameByUserId(dto.getUserId()));
         order.setServiceId(dto.getServiceId());
@@ -69,7 +70,7 @@ public class AliPayServiceImpl implements AliPayService {
     }
     @PostConstruct
     public void InitDelayedOrder() {
-        QueueUtils.subscribeBlockingQueue("payDelay", (Long orderNum) -> {
+        QueueUtils.subscribeBlockingQueue("payDelay", (String orderNum) -> {
             // 观察接收时间
             log.info("通道: {}, 收到数据: {}", "payDelay", orderNum);
             return CompletableFuture.runAsync(() -> {
@@ -79,6 +80,8 @@ public class AliPayServiceImpl implements AliPayService {
                 chServicesOrderVo.setPayStatus("4");
                 chServicesOrderVo.setStatus("4");
                 ChServicesOrderBo orderBo = MapstructUtils.convert(chServicesOrderVo, ChServicesOrderBo.class);
+//                ChServicesOrderBo orderBo = new ChServicesOrderBo();
+//                BeanUtil.copyProperties(chServicesOrderVo, orderBo);
                 if (orderBo != null) {
                     orderService.changeOrderStatus(orderBo);
                     QueueUtils.destroyDelayedQueue("payDelay");

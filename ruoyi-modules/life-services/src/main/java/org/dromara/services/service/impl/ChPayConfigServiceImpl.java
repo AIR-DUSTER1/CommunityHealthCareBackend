@@ -1,16 +1,19 @@
 package org.dromara.services.service.impl;
 
+import cn.hutool.json.JSONUtil;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.AlipayConfig;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
+import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
-import org.dromara.common.oss.constant.OssConstant;
-import org.dromara.common.redis.utils.RedisUtils;
 import org.springframework.stereotype.Service;
 import org.dromara.services.domain.bo.ChPayConfigBo;
 import org.dromara.services.domain.vo.ChPayConfigVo;
@@ -141,5 +144,14 @@ public class ChPayConfigServiceImpl implements IChPayConfigService {
 //            RedisUtils.setCacheObject(OssConstant.DEFAULT_CONFIG_KEY, chPayConfig.getConfigKey());
 //        }
         return row;
+    }
+
+    @Override
+    public void init() {
+        List<ChPayConfig> configs = baseMapper.selectList(new LambdaQueryWrapper<ChPayConfig>().eq(ChPayConfig::getStatus, "1"));
+        if (configs.size() > 1){
+            throw new ServiceException("支付宝配置不能同时超过一个");
+        }
+        ChPayConfig payConfig = configs.get(0);
     }
 }

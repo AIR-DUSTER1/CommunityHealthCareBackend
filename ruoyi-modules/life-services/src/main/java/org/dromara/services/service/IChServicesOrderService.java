@@ -23,7 +23,7 @@ public interface IChServicesOrderService {
      * @param servicesOrderId 主键
      * @return 服务订单
      */
-    ChServicesOrderVo queryById(Long servicesOrderId);
+    ChServicesOrderVo queryById(String servicesOrderId);
 
     /**
      * 分页查询服务订单列表

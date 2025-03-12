@@ -183,6 +183,11 @@
                 <artifactId>common-unipush</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>ruoyi-common-pay</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

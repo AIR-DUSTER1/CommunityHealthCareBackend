@@ -35,6 +35,7 @@
         <module>ruoyi-common-websocket</module>
         <module>ruoyi-common-sse</module>
         <module>common-unipush</module>
+        <module>ruoyi-common-pay</module>
     </modules>
 
     <artifactId>ruoyi-common</artifactId>

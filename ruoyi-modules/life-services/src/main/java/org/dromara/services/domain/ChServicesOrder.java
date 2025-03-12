@@ -26,12 +26,12 @@ public class ChServicesOrder extends BaseEntity {
      * 服务订单ID
      */
     @TableId(value = "services_order_id")
-    private Long servicesOrderId;
+    private String servicesOrderId;
 
     /**
      * 服务ID
      */
-    private Long servicesId;
+    private Long serviceId;
 
     /**
      * 服务名称

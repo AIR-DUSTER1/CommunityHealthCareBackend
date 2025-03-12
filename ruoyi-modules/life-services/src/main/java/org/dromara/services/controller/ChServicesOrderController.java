@@ -64,7 +64,7 @@ public class ChServicesOrderController extends BaseController {
     @SaCheckPermission("services:servicesOrder:query")
     @GetMapping("/{servicesOrderId}")
     public R<ChServicesOrderVo> getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long servicesOrderId) {
+                                     @PathVariable String servicesOrderId) {
         return R.ok(chServicesOrderService.queryById(servicesOrderId));
     }
 

@@ -260,6 +260,12 @@ justauth:
       client-secret: 1f7d08**********5b7**********29e
       redirect-uri: ${justauth.address}/social-callback?source=gitlab
 
+alipay:
+  app-id: ${ALIPAY_APP_ID}
+  app-private-key: ${ALIPAY_APP_PRIVATE_KEY}
+  alipay-public-key: ${ALIPAY_PUBLIC_KEY}+G1xarOv1NPbpWBm7pQnESkGQ5G2e/2QtlgCGKcEtuXlhNUngkQ7gDy8S4EMmKUtg1rRNYWeq2yiEPMIxQE5iNz7yh8kwZqvKbuYedsA1iQgX+lfVpM/THr6oMuG3UON0/+c+Z83NSToCrC4N8G2VErdnnd9QUkMRjNzcL0kzCERYoHSdj56DvyAiUF8n611eBazAr28Bss5XspF0XRFsD/a3QlmeYdXCl1jHBI1IHXwrIL6l${ALIPAY_PUBLIC_KEY}
+  notify-url: ${ALIPAY_NOTIFY_URL}
+
 spring:
   ai:
     dashscope:

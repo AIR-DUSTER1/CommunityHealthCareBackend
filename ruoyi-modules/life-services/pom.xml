@@ -20,11 +20,6 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.alipay.sdk</groupId>
-            <artifactId>alipay-sdk-java</artifactId>
-            <version>4.39.194.ALL</version>
-        </dependency>
-        <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-core</artifactId>
         </dependency>
@@ -59,6 +54,10 @@
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-translation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>ruoyi-common-pay</artifactId>
         </dependency>
     </dependencies>
 </project>

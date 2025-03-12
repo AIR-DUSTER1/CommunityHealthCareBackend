@@ -35,8 +35,12 @@ public class ChServicesOrderVo implements Serializable {
      * 服务订单ID
      */
     @ExcelProperty(value = "服务订单ID")
-    private Long servicesOrderId;
-
+    private String servicesOrderId;
+    /**
+     * 服务ID
+     */
+    @ExcelProperty(value = "服务ID")
+    private Long serviceId;
     /**
      * 服务名称
      */

@@ -26,8 +26,12 @@ public class ChServicesOrderBo extends BaseEntity {
      * 服务订单ID
      */
     @NotNull(message = "服务订单ID不能为空", groups = { EditGroup.class })
-    private Long servicesOrderId;
-
+    private String servicesOrderId;
+    /**
+     * 服务ID
+     */
+    @NotNull(message = "服务ID不能为空", groups = { EditGroup.class })
+    private Long serviceId;
     /**
      * 服务名称
      */
@@ -72,10 +76,6 @@ public class ChServicesOrderBo extends BaseEntity {
      * 用户ID
      */
     private Long userId;
-    /**
-     * 服务ID
-     */
-    private Long serviceId;
     /**
      * 支付流水号
      */

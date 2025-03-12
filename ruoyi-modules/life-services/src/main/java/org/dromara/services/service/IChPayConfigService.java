@@ -67,4 +67,6 @@ public interface IChPayConfigService {
     Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
 
     int updatePayConfigStatus(ChPayConfigBo bo);
+
+    void init();
 }
