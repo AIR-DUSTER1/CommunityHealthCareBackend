@@ -2,6 +2,7 @@ package org.dromara.services.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -125,7 +126,7 @@ public class ChServicesAccountServiceImpl implements IChServicesAccountService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean updateByBo(ChServicesAccountBo bo) {
         ChServicesAccount update = MapstructUtils.convert(bo, ChServicesAccount.class);
-        validEntityBeforeSave(update);
+//        validEntityBeforeSave(update);
         boolean flag=baseMapper.updateById(update) > 0;
         if (flag) {
             ChUserAccount chUserAccount = chUserAccountMapper.selectOne(new LambdaQueryWrapper<ChUserAccount>().eq(ChUserAccount::getUserId, update.getUserId()));
@@ -167,11 +168,10 @@ public class ChServicesAccountServiceImpl implements IChServicesAccountService {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
         }
-        LambdaQueryWrapper<ChServicesAccount> lqw = Wrappers.lambdaQuery();
-        lqw.eq(ChServicesAccount::getUserId, ids);
-
         return baseMapper.update(null, new LambdaUpdateWrapper<ChServicesAccount>()
-            .set(ChServicesAccount::getStatus, "2")) > 0;
+            .set(ChServicesAccount::getStatus, "2")
+//            .set(ChServicesAccount::getRemark, "管理员冻结账户")
+            .in(ChServicesAccount::getAccountId, ids)) > 0;
     }
 
     @Override
@@ -184,9 +184,13 @@ public class ChServicesAccountServiceImpl implements IChServicesAccountService {
         if (isAdd){
             chServicesAccount.setBalance(chServicesAccount.getBalance().add(price));
             baseMapper.update(chServicesAccount, new LambdaUpdateWrapper<ChServicesAccount>().eq(ChServicesAccount::getAccountId, chServicesAccount.getAccountId()));
-        }else{
-            chServicesAccount.setFreezeBalance(price);
+        }else if (!isAdd&& chServicesAccount.getFreezeBalance().compareTo(price) >0){
+            chServicesAccount.setFreezeBalance(chServicesAccount.getBalance().add(price));
             baseMapper.update(chServicesAccount, new LambdaUpdateWrapper<ChServicesAccount>().eq(ChServicesAccount::getAccountId, chServicesAccount.getAccountId()));
+        }else if (!isAdd&&chServicesAccount.getBalance().compareTo(price)==0){
+            throw new RuntimeException("账户金额不足");
+        } else if (!isAdd&&chServicesAccount.getBalance().compareTo(price) <0) {
+            throw new RuntimeException("账户金额不足");
         }
     }
 

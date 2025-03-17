@@ -246,4 +246,9 @@ public class ChServicesServiceImpl implements IChServicesService {
         }
         return res;
     }
+
+    @Override
+    public ChServicesVo selectByName(String name) {
+        return baseMapper.selectByName(name);
+    }
 }

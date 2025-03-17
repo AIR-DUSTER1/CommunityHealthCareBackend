@@ -96,7 +96,7 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @param userId
      * @return
      */
-    int insertAccount(@Param("userName") String userName, @Param("userId") Long userId);
+    int insertAccount(@Param("userName") String userName, @Param("userId") Long userId,@Param("physicalCondition") String physicalCondition);
 
     /**
      * 根据用户id查询账户信息

@@ -40,8 +40,8 @@ public class AliPayServiceImpl implements AliPayService {
     public ChServices queryService(Long serviceId) {
         return aliPayMapper.userNameByUserId(serviceId);
     }
-    public ChServicesOrderBo createOrderBo(BuyDTO dto, ChServices service) {
-        ChServicesOrderBo order = new ChServicesOrderBo();
+    public ChServicesOrder createOrder(BuyDTO dto, ChServices service) {
+        ChServicesOrder order = new ChServicesOrder();
         order.setServicesOrderId(UUID.randomUUID().toString().replace("-", "").substring(0, 32));
         order.setUserId(dto.getUserId());
         order.setUserName(userNameByUserId(dto.getUserId()));
@@ -54,8 +54,8 @@ public class AliPayServiceImpl implements AliPayService {
         order.setRemark("购买" + service.getName() + "服务");
         return order;
     }
-    public ChServicesOrderBo createOrderBo(PayDTO dto, ChServices service) {
-        ChServicesOrderBo order = new ChServicesOrderBo();
+    public ChServicesOrder createOrder(PayDTO dto, ChServices service) {
+        ChServicesOrder order = new ChServicesOrder();
         order.setServicesOrderId(UUID.randomUUID().toString().replace("-", "").substring(0, 32));
         order.setUserId(dto.getUserId());
         order.setUserName(userNameByUserId(dto.getUserId()));
@@ -76,20 +76,21 @@ public class AliPayServiceImpl implements AliPayService {
             return CompletableFuture.runAsync(() -> {
                 // 异步处理数据逻辑 不要在上方处理业务逻辑
                 log.info("数据处理: {}", orderNum);
-                ChServicesOrderVo chServicesOrderVo = orderService.queryById(orderNum);
-                chServicesOrderVo.setPayStatus("4");
-                chServicesOrderVo.setStatus("4");
-                ChServicesOrderBo orderBo = MapstructUtils.convert(chServicesOrderVo, ChServicesOrderBo.class);
+                ChServicesOrder chServicesOrder = orderService.queryById(orderNum);
+                chServicesOrder.setPayStatus("4");
+                chServicesOrder.setStatus("4");
+                chServicesOrder.setRemark("订单超时未支付");
+
 //                ChServicesOrderBo orderBo = new ChServicesOrderBo();
 //                BeanUtil.copyProperties(chServicesOrderVo, orderBo);
-                if (orderBo != null) {
-                    orderService.changeOrderStatus(orderBo);
+                if (chServicesOrder != null) {
+                    orderService.changeOrderStatus(chServicesOrder);
                     QueueUtils.destroyDelayedQueue("payDelay");
                 }
             });
         }, true);
     }
-    public void PublishDelayedOrder(ChServicesOrderBo order) {
+    public void PublishDelayedOrder(ChServicesOrder order) {
         QueueUtils.addDelayedQueueObject("payDelay", order.getServicesOrderId(), 600, TimeUnit.SECONDS);
     }
 }

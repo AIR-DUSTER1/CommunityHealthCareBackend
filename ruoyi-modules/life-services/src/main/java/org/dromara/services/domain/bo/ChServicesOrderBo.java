@@ -66,7 +66,10 @@ public class ChServicesOrderBo extends BaseEntity {
      */
     @NotBlank(message = "支付状态不能为空", groups = { EditGroup.class })
     private String payStatus;
-
+    /**
+     * 预约地址
+     */
+    private String address;
     /**
      * 订单状态
      */

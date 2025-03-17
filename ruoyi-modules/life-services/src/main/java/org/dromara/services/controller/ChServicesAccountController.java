@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.dromara.services.domain.ChServicesAccount;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
@@ -96,7 +97,7 @@ public class ChServicesAccountController extends BaseController {
      * @param accountIds 主键串
      */
     @SaCheckPermission("services:servicesAccount:remove")
-    @Log(title = "账户管理", businessType = BusinessType.DELETE)
+    @Log(title = "账户管理", businessType = BusinessType.UPDATE)
     @DeleteMapping("/{accountIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] accountIds) {

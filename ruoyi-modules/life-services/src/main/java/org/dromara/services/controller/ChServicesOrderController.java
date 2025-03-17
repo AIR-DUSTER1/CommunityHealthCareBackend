@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import org.dromara.services.domain.ChServicesOrder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
@@ -63,8 +64,9 @@ public class ChServicesOrderController extends BaseController {
      */
     @SaCheckPermission("services:servicesOrder:query")
     @GetMapping("/{servicesOrderId}")
-    public R<ChServicesOrderVo> getInfo(@NotNull(message = "主键不能为空")
+    public R<ChServicesOrder> getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable String servicesOrderId) {
+
         return R.ok(chServicesOrderService.queryById(servicesOrderId));
     }
 
@@ -99,7 +101,7 @@ public class ChServicesOrderController extends BaseController {
     @Log(title = "服务订单", businessType = BusinessType.DELETE)
     @DeleteMapping("/{servicesOrderIds}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] servicesOrderIds) {
+                          @PathVariable String[] servicesOrderIds) {
         return toAjax(chServicesOrderService.deleteWithValidByIds(List.of(servicesOrderIds), true));
     }
 }

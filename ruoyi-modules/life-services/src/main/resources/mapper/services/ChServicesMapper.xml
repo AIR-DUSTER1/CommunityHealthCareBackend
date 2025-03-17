@@ -7,4 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectClassification" resultType="java.lang.String">
         SELECT dict_value FROM `sys_dict_data` WHERE dict_type = 'ch_services_classification'
     </select>
+    <select id="selectByName" resultType="org.dromara.services.domain.vo.ChServicesVo">
+        SELECT * FROM ch_services WHERE name = #{name}
+    </select>
 </mapper>

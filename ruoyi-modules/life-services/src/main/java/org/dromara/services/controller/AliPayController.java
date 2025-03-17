@@ -68,9 +68,9 @@ public class AliPayController extends BaseController {
 
 	@GetMapping("/topay")
     @Transactional
-	public String pay(PayDTO dto, Model model) {
+	public String pay(BuyDTO dto, Model model) {
         ChServices service = payService.queryService(dto.getServiceId());
-        ChServicesOrderBo order = payService.createOrderBo(dto,service);
+        ChServicesOrder order = payService.createOrder(dto,service);
         ChServicesAccountVo account = accountService.queryById(dto.getAccountId());
 		if (account == null) {
 			throw new RuntimeException("账户不存在");
@@ -79,7 +79,7 @@ public class AliPayController extends BaseController {
         AlipayTradeWapPayRequest request = new AlipayTradeWapPayRequest();
 		AlipayTradeWapPayModel bizModel = new AlipayTradeWapPayModel();
 		bizModel.setOutTradeNo(String.valueOf(order.getServicesOrderId()));
-		bizModel.setTotalAmount(String.valueOf(dto.getPrice()));
+//		bizModel.setTotalAmount(String.valueOf(dto.getPrice()));
 		bizModel.setSubject("社区充值");
 		bizModel.setProductCode("FAST_INSTANT_TRADE_PAY");
 		request.setBizModel(bizModel);
@@ -113,17 +113,17 @@ public class AliPayController extends BaseController {
 	@GetMapping("/apppay")
     @RepeatSubmit()
     @Transactional
-        public AlipayTradeAppPayResponse alipay(PayDTO dto) {
+        public AlipayTradeAppPayResponse alipay(BuyDTO dto) {
         ChServices service = payService.queryService(dto.getServiceId());
-        ChServicesOrderBo order = payService.createOrderBo(dto,service);
-        Boolean b = orderService.insertByBo(order);
+        ChServicesOrder order = payService.createOrder(dto,service);
+        Boolean b = orderService.insertBy(order);
         if (!b){
             return null;
         }
 		AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
 		AlipayTradeAppPayModel bizModel = new AlipayTradeAppPayModel();
 		bizModel.setOutTradeNo(String.valueOf(order.getServicesOrderId()));
-		bizModel.setTotalAmount(String.valueOf(dto.getPrice()));
+//		bizModel.setTotalAmount(String.valueOf(dto.getPrice()));
 		bizModel.setSubject("社区充值");
 		bizModel.setProductCode("QUICK_MSECURITY_PAY");
 		request.setBizModel(bizModel);
@@ -156,22 +156,22 @@ public class AliPayController extends BaseController {
 			if (signVerified) {
 				log.info("签名验证成功");
 				// TODO 修改业务
-                ChServicesOrderBo order = new ChServicesOrderBo();
-                order.setTraceNo(params.get("trade_no"));
-                order.setUpdateTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
-                order.setServicesOrderId(params.get("out_trade_no"));
-                order.setPayStatus("2");//支付成功
-                order.setStatus("3");//已付款
-				orderService.changeOrderStatus(order);
-                QueueUtils.removeDelayedQueueObject("payDelay", order.getServicesOrderId());
+                ChServicesOrder chServicesOrder = orderService.queryById(params.get("out_trade_no"));
+                chServicesOrder.setTraceNo(params.get("trade_no"));
+                chServicesOrder.setUpdateTime(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+                chServicesOrder.setServicesOrderId(params.get("out_trade_no"));
+                chServicesOrder.setPayStatus("2");//支付成功
+                chServicesOrder.setStatus("1");//已付款
+				orderService.changeOrderStatus(chServicesOrder);
+                QueueUtils.removeDelayedQueueObject("payDelay", chServicesOrder.getServicesOrderId());
                 QueueUtils.destroyDelayedQueue("payDelay");
-                ChServicesOrderVo chServicesOrderVo = orderService.queryById(order.getServicesOrderId());
-                ChServicesVo chServicesVo = service.queryById(order.getServiceId());
+//                ChServicesOrder chServicesOrder = orderService.queryById(order.getServicesOrderId());
+                ChServicesVo chServicesVo = service.selectByName(params.get("subject"));
                 String classification = chServicesVo.getClassification();
                 if (classification.equals("充值服务")){
-                    accountService.updatePrice(chServicesOrderVo.getUserId(), chServicesOrderVo.getPrice(),true);
+                    accountService.updatePrice(chServicesOrder.getUserId(), chServicesOrder.getPrice(),true);
                 }else {
-                    accountService.updatePrice(chServicesOrderVo.getUserId(), chServicesOrderVo.getPrice(),false);
+                    accountService.updatePrice(chServicesOrder.getUserId(), chServicesOrder.getPrice(),false);
                 }
 			} else {
 				log.error("签名验证失败");
@@ -183,41 +183,45 @@ public class AliPayController extends BaseController {
 //		webSocketServer.sendToAllClient("success");
 		return "success";
 	}
+    @ResponseBody
     @PostMapping("/buy")
     @RepeatSubmit()
     @Log(title = "支付", businessType = BusinessType.INSERT)
     @Transactional
-    public R<Void> buy(@RequestBody BuyDTO dto) {
+    public AlipayTradeAppPayResponse buy(@RequestBody BuyDTO dto) {
         ChServices service = payService.queryService(dto.getServiceId());
-        ChServicesOrderBo order = payService.createOrderBo(dto, service);
-        Boolean b = orderService.insertByBo(order);
-        if (b){
-            AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
-            AlipayTradeAppPayModel bizModel = new AlipayTradeAppPayModel();
-		    bizModel.setOutTradeNo(String.valueOf(order.getServicesOrderId()));
-            bizModel.setTotalAmount(String.valueOf(order.getPrice()));
-            bizModel.setSubject(order.getServicesName());
-            bizModel.setProductCode("QUICK_MSECURITY_PAY");
-            request.setBizModel(bizModel);
-            request.setNotifyUrl(aliPayConfig.getNotifyUrl());
-            try {
-                //这里和普通的接口调用不同，使用的是sdkExecute
-                AlipayTradeAppPayResponse response = alipayClient.sdkExecute(request);
-                log.info("支付宝响应: {}", response.getBody());
-            } catch (AlipayApiException e) {
-                log.error("支付宝支付失败", e);
-                throw new RuntimeException(e.getMessage());
-            }
+        ChServicesOrder order = payService.createOrder(dto, service);
+        Boolean b = orderService.insertBy(order);
+        if (!b) {
+            return null;
+        }
+        AlipayTradeAppPayRequest request = new AlipayTradeAppPayRequest();
+        AlipayTradeAppPayModel bizModel = new AlipayTradeAppPayModel();
+        bizModel.setOutTradeNo(String.valueOf(order.getServicesOrderId()));
+        bizModel.setTotalAmount(String.valueOf(order.getPrice()));
+        bizModel.setSubject(order.getServicesName());
+        bizModel.setProductCode("QUICK_MSECURITY_PAY");
+        request.setBizModel(bizModel);
+        request.setNotifyUrl(aliPayConfig.getNotifyUrl());
+        try {
+            //这里和普通的接口调用不同，使用的是sdkExecute
+            AlipayTradeAppPayResponse response = alipayClient.sdkExecute(request);
+            log.info("支付宝响应: {}", response.getBody());
+            return response;
+        } catch (AlipayApiException e) {
+            log.error("支付宝支付失败", e);
+            throw new RuntimeException(e.getMessage());
+        } finally {
             order.setPayStatus("1");// 支付中
             payService.PublishDelayedOrder(order);
+            orderService.changeOrderStatus(order);
         }
-        return toAjax(orderService.changeOrderStatus(order));
     }
-    @PostMapping("/refund")
-    @RepeatSubmit()
-    @Log(title = "支付", businessType = BusinessType.INSERT)
-    public R<Void> Refund(){
-        ChServicesOrderBo order = new ChServicesOrderBo();
-        return toAjax(orderService.changeOrderStatus(order));
-    }
+//    @PostMapping("/refund")
+//    @RepeatSubmit()
+//    @Log(title = "支付", businessType = BusinessType.INSERT)
+//    public R<Void> Refund(){
+//        ChServicesOrderBo order = new ChServicesOrderBo();
+//        return toAjax(orderService.changeOrderStatus(order));
+//    }
 }

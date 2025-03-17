@@ -41,7 +41,8 @@ public class ChatController {
      * @return Flux<String> types.
      */
     @GetMapping("/stream/chat")
-    public Flux<ServerSentEvent<String>> streamChat (@RequestParam(value = "message", defaultValue = "你好，介绍下你自己吧。") String message) {
+    public Flux<ServerSentEvent<String>> streamChat (@RequestParam(value = "message", defaultValue =
+        "你是问诊仪助手") String message) {
         Flux<ChatResponse> stream = DeepSeekChatModel.stream(new Prompt(new UserMessage(message)));
         return stream.map(resp -> ServerSentEvent.builder(resp.getResult().getOutput().getContent()).build());
     }

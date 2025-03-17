@@ -62,7 +62,10 @@ public class ChServicesOrderVo implements Serializable {
      */
     @ExcelProperty(value = "订单金额")
     private BigDecimal price;
-
+    /**
+     * 预约地址
+     */
+    private String address;
     /**
      * 订单备注
      */

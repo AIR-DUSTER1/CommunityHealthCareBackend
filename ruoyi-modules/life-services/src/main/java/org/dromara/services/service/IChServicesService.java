@@ -81,4 +81,6 @@ public interface IChServicesService {
 
     List<Category> queryCategory(String type);
     List<Category> queryAll(String type,String name);
+
+    ChServicesVo selectByName(String name);
 }

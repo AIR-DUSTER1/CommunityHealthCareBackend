@@ -17,4 +17,6 @@ import java.util.List;
 public interface ChServicesMapper extends BaseMapperPlus<ChServices, ChServicesVo> {
 
     List<String> selectClassification();
+
+    ChServicesVo selectByName(String name);
 }

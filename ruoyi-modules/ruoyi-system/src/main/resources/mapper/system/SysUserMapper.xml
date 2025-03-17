@@ -17,7 +17,7 @@
             ${ew.getSqlSelect}
         </if>
         <if test="ew.getSqlSelect == null">
-            u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phone_number, u.sex,
+            u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phone_number, u.sex,u.user_type,u.living_alone,u.marital_status,u.emergency_phone,u.chronic_diseases,u.health_status,u.address,u.age,u.birth_date,
             u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark
         </if>
         from sys_user u
@@ -74,7 +74,7 @@
     </select>
 
     <insert id="insertAccount">
-        insert into ch_services_account (user_id, account_name) values (#{userId}, #{userName})
+        insert into ch_services_account (user_id, account_name,physical_condition) values (#{userId}, #{userName},#{physicalCondition})
     </insert>
 
 </mapper>

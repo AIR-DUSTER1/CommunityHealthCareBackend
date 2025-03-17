@@ -86,8 +86,11 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     private Wrapper<SysUser> buildQueryWrapper(SysUserBo user) {
         Map<String, Object> params = user.getParams();
         QueryWrapper<SysUser> wrapper = Wrappers.query();
+        if (user ==null) {
+            return wrapper;
+        }
         wrapper.eq("u.del_flag", UserConstants.USER_NORMAL)
-            .eq("u.user_type",UserConstants.SYS_USER)
+            .eq(StringUtils.isNotBlank(user.getUserType()),"u.user_type",user.getUserType())
             .eq(StringUtils.isNotBlank(user.getSex()), "u.sex", user.getSex())
             .eq(StringUtils.isNotBlank(user.getHealthStatus()), "u.health_status", user.getHealthStatus())
             .eq(StringUtils.isNotBlank(user.getLivingAlone()), "u.living_alone", user.getLivingAlone())
@@ -326,7 +329,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         insertUserRole(user, false);
         int i = baseMapper.selectAccountByUserId(sysUser.getUserId());
         if (i == 0){
-            baseMapper.insertAccount(sysUser.getUserName(), sysUser.getUserId());
+            baseMapper.insertAccount(sysUser.getUserName(), sysUser.getUserId(),sysUser.getHealthStatus());
         }
         return rows;
     }

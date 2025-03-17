@@ -57,7 +57,10 @@ public class ChServicesOrder extends BaseEntity {
      * 订单备注
      */
     private String remark;
-
+    /**
+     * 预约地址
+     */
+    private String address;
     /**
      * 支付方式
      */

@@ -1,7 +1,6 @@
 package org.dromara.services.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import jakarta.validation.constraints.NotBlank;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -10,8 +9,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
-import org.dromara.services.domain.ChPayConfig;
-import org.dromara.services.domain.ChServices;
 import org.springframework.stereotype.Service;
 import org.dromara.services.domain.bo.ChServicesOrderBo;
 import org.dromara.services.domain.vo.ChServicesOrderVo;
@@ -42,8 +39,8 @@ public class ChServicesOrderServiceImpl implements IChServicesOrderService {
      * @return 服务订单
      */
     @Override
-    public ChServicesOrderVo queryById(String servicesOrderId){
-        return baseMapper.selectVoById(servicesOrderId);
+    public ChServicesOrder queryById(String servicesOrderId){
+        return baseMapper.selectById(servicesOrderId);
     }
 
     /**
@@ -99,12 +96,15 @@ public class ChServicesOrderServiceImpl implements IChServicesOrderService {
      * @return 是否新增成功
      */
     @Override
-    public Boolean insertByBo(ChServicesOrderBo bo) {
-        ChServicesOrder add = MapstructUtils.convert(bo, ChServicesOrder.class);
-        validEntityBeforeSave(add);
-        boolean flag = baseMapper.insert(add) > 0;
+    public Boolean insertBy(ChServicesOrder bo) {
+//        ChServicesOrder add = new ChServicesOrder();
+//        ChServicesOrder add = MapstructUtils.convert(bo, ChServicesOrder.class);
+//        add.setServiceId(bo.getServiceId());
+//        add.set
+        validEntityBeforeSave(bo);
+        boolean flag = baseMapper.insert(bo) > 0;
         if (flag) {
-            bo.setServicesOrderId(add.getServicesOrderId());
+            bo.setServicesOrderId(bo.getServicesOrderId());
         }
         return flag;
     }
@@ -149,18 +149,23 @@ public class ChServicesOrderServiceImpl implements IChServicesOrderService {
      * @return 是否删除成功
      */
     @Override
-    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
+    public Boolean deleteWithValidByIds(Collection<String> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
         }
-        return baseMapper.deleteByIds(ids) > 0;
+        return baseMapper.update(null, new LambdaUpdateWrapper<ChServicesOrder>()
+            .set(ChServicesOrder::getStatus, "4")
+            .set(ChServicesOrder::getRemark, "管理员取消订单")
+            .in(ChServicesOrder::getServicesOrderId, ids)) > 0;
     }
 
     @Override
-    public int changeOrderStatus(ChServicesOrderBo bo) {
+    public int changeOrderStatus(ChServicesOrder bo) {
         return baseMapper.update(null, new LambdaUpdateWrapper<ChServicesOrder>()
+            .eq(ChServicesOrder::getServicesOrderId, bo.getServicesOrderId())
             .set(StringUtils.isNotBlank(bo.getPayStatus()),ChServicesOrder::getPayStatus,bo.getPayStatus())
-            .set(StringUtils.isNotBlank(bo.getStatus()),ChServicesOrder::getStatus, bo.getStatus()));
+            .set(StringUtils.isNotBlank(bo.getStatus()),ChServicesOrder::getStatus, bo.getStatus())
+            .set(StringUtils.isNotBlank(bo.getRemark()),ChServicesOrder::getRemark,bo.getRemark()));
     }
 
 }

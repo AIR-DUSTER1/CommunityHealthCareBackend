@@ -1,6 +1,6 @@
 package org.dromara.services.service;
 
-import org.dromara.services.domain.dto.PayOrderDTO;
+import org.dromara.services.domain.ChServicesOrder;
 import org.dromara.services.domain.vo.ChServicesOrderVo;
 import org.dromara.services.domain.bo.ChServicesOrderBo;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -23,7 +23,7 @@ public interface IChServicesOrderService {
      * @param servicesOrderId 主键
      * @return 服务订单
      */
-    ChServicesOrderVo queryById(String servicesOrderId);
+    ChServicesOrder queryById(String servicesOrderId);
 
     /**
      * 分页查询服务订单列表
@@ -48,7 +48,7 @@ public interface IChServicesOrderService {
      * @param bo 服务订单
      * @return 是否新增成功
      */
-    Boolean insertByBo(ChServicesOrderBo bo);
+    Boolean insertBy(ChServicesOrder bo);
 
     /**
      * 修改服务订单
@@ -65,7 +65,7 @@ public interface IChServicesOrderService {
      * @param isValid 是否进行有效性校验
      * @return 是否删除成功
      */
-    Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid);
+    Boolean deleteWithValidByIds(Collection<String> ids, Boolean isValid);
 
-    int changeOrderStatus(ChServicesOrderBo bo);
+    int changeOrderStatus(ChServicesOrder bo);
 }

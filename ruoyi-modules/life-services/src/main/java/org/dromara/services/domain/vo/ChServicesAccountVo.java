@@ -59,7 +59,7 @@ public class ChServicesAccountVo implements Serializable {
     /**
      * 身体状态
      */
-    @ExcelProperty(value = "账户状态", converter = ExcelDictConvert.class)
+    @ExcelProperty(value = "身体状态", converter = ExcelDictConvert.class)
     @ExcelDictFormat(dictType = "ch_services_account_physical_condition")
     private String physicalCondition;
     /**

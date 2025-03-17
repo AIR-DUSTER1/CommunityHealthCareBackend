@@ -113,6 +113,7 @@ public class SysUser extends TenantEntity {
     /**
      * 出生日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
 
     /**
