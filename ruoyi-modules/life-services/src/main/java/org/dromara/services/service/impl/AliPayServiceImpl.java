@@ -46,6 +46,8 @@ public class AliPayServiceImpl implements AliPayService {
         order.setUserId(dto.getUserId());
         order.setUserName(userNameByUserId(dto.getUserId()));
         order.setServiceId(dto.getServiceId());
+        order.setAddress(dto.getAddress());
+        order.setPhone(dto.getPhone());
         order.setServicesName(service.getName());
         order.setPrice(service.getPrice());
         order.setPaymentType("0"); // 支付宝支付

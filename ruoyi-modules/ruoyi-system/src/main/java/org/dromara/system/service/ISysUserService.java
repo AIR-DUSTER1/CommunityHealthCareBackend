@@ -3,6 +3,7 @@ package org.dromara.system.service;
 import jakarta.validation.constraints.NotBlank;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.system.domain.SysUerOderInfo;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysUserExportVo;
 import org.dromara.system.domain.vo.SysUserVo;
@@ -224,4 +225,5 @@ public interface ISysUserService {
     int updateUserPhone(Long userId , String phonenumber);
 
     int updateUserEmail(Long userId,  String email);
+    SysUerOderInfo queryUserOderInfo(Long userId);
 }

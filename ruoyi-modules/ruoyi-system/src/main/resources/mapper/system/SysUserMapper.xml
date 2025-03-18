@@ -76,5 +76,7 @@
     <insert id="insertAccount">
         insert into ch_services_account (user_id, account_name,physical_condition) values (#{userId}, #{userName},#{physicalCondition})
     </insert>
-
+    <select id="queryUserAddress" resultType="org.dromara.system.domain.SysUerOderInfo">
+        select user_name,phone_number,address from sys_user where user_id = #{userId}
+    </select>
 </mapper>

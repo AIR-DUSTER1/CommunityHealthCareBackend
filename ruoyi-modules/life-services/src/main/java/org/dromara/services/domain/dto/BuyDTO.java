@@ -16,4 +16,12 @@ public class BuyDTO {
      * 账号id
      */
     private Long accountId;
+    /**
+     * 下单手机号
+     */
+    private String phone;
+    /**
+     * 下单详细地址
+     */
+    private String address;
 }

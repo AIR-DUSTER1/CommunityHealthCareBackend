@@ -52,6 +52,10 @@ public class ChServicesOrder extends BaseEntity {
      * 订单金额
      */
     private BigDecimal price;
+    /**
+     * 预约电话
+     */
+    private String phone;
 
     /**
      * 订单备注

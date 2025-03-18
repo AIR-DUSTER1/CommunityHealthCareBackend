@@ -23,6 +23,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.tenant.helper.TenantHelper;
 import org.dromara.common.web.core.BaseController;
+import org.dromara.system.domain.SysUerOderInfo;
 import org.dromara.system.domain.bo.SysDeptBo;
 import org.dromara.system.domain.bo.SysPostBo;
 import org.dromara.system.domain.bo.SysRoleBo;
@@ -297,4 +298,8 @@ public class SysUserController extends BaseController {
         return R.ok(userService.selectUserListByDept(deptId));
     }
 
+    @GetMapping("/query/UserOderInfo")
+    public R<SysUerOderInfo> queryUserOderInfo(Long userId){
+        return R.ok(userService.queryUserOderInfo(userId));
+    }
 }

@@ -697,4 +697,9 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     public int updateUserEmail(Long userId, String email) {
         return baseMapper.update(null,new LambdaUpdateWrapper<SysUser>().set(SysUser::getEmail,email).eq(SysUser::getUserId,userId));
     }
+
+    @Override
+    public SysUerOderInfo queryUserOderInfo(Long userId) {
+        return baseMapper.queryUserAddress(userId);
+    }
 }
