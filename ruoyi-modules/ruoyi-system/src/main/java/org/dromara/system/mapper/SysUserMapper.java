@@ -106,5 +106,5 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      */
     int selectAccountByUserId(@Param("userId") Long userId);
 
-    SysUerOderInfo queryUserAddress(@Param("userId") Long userId);
+    List<SysUerOderInfo> queryUserAddress(@Param("userId") Long userId);
 }

@@ -225,5 +225,5 @@ public interface ISysUserService {
     int updateUserPhone(Long userId , String phonenumber);
 
     int updateUserEmail(Long userId,  String email);
-    SysUerOderInfo queryUserOderInfo(Long userId);
+    List<SysUerOderInfo> queryUserOderInfo(Long userId);
 }

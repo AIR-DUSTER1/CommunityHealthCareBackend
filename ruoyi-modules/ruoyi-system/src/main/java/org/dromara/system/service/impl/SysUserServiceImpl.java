@@ -699,7 +699,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     }
 
     @Override
-    public SysUerOderInfo queryUserOderInfo(Long userId) {
+    public List<SysUerOderInfo> queryUserOderInfo(Long userId) {
         return baseMapper.queryUserAddress(userId);
     }
 }

@@ -299,7 +299,7 @@ public class SysUserController extends BaseController {
     }
 
     @GetMapping("/query/UserOderInfo")
-    public R<SysUerOderInfo> queryUserOderInfo(Long userId){
+    public R<List<SysUerOderInfo>> queryUserOderInfo(Long userId){
         return R.ok(userService.queryUserOderInfo(userId));
     }
 }
