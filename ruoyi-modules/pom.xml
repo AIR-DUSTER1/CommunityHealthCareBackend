@@ -13,7 +13,6 @@
         <module>ruoyi-generator</module>
 <!--        <module>ruoyi-job</module>-->
         <module>ruoyi-system</module>
-<!--        <module>ruoyi-workflow</module>-->
         <module>news-article</module>
         <module>chat-ai</module>
         <module>life-services</module>

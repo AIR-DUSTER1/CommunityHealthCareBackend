@@ -40,10 +40,6 @@ public class SysUserVo implements Serializable {
     @ExcelProperty(value = "用户ID")
     private Long userId;
     /**
-     * 租户ID
-     */
-    private String tenantId;
-    /**
      * 部门ID
      */
     @ExcelProperty(value = "部门ID")
@@ -182,12 +178,14 @@ public class SysUserVo implements Serializable {
      * 创建部门
      */
     @ExcelProperty(value = "创建部门")
+    @Translation(type = TransConstant.DEPT_ID_TO_NAME)
     private Long createDept;
 
     /**
      * 创建者
      */
     @ExcelProperty(value = "创建者")
+    @Translation(type = TransConstant.USER_ID_TO_NICKNAME)
     private Long createBy;
 
     /**
@@ -200,6 +198,7 @@ public class SysUserVo implements Serializable {
      * 更新者
      */
     @ExcelProperty(value = "更新者")
+    @Translation(type = TransConstant.USER_ID_TO_NICKNAME)
     private Long updateBy;
 
     /**

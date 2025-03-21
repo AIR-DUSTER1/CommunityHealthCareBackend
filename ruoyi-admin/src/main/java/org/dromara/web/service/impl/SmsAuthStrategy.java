@@ -22,7 +22,6 @@ import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.redis.utils.RedisUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
-import org.dromara.common.tenant.helper.TenantHelper;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.vo.SysClientVo;
 import org.dromara.system.domain.vo.SysUserVo;
@@ -51,15 +50,13 @@ public class SmsAuthStrategy implements IAuthStrategy {
     public LoginVo login(String body, SysClientVo client) {
         SmsLoginBody loginBody = JsonUtils.parseObject(body, SmsLoginBody.class);
         ValidatorUtils.validate(loginBody);
-        String tenantId = loginBody.getTenantId();
-        String phonenumber = loginBody.getPhonenumber();
+        String phoneNumber = loginBody.getPhoneNumber();
         String smsCode = loginBody.getSmsCode();
-        LoginUser loginUser = TenantHelper.dynamic(tenantId, () -> {
-            SysUserVo user = loadUserByPhonenumber(phonenumber);
-            loginService.checkLogin(LoginType.SMS, tenantId, user.getUserName(), () -> !validateSmsCode(tenantId, phonenumber, smsCode));
-            // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
-            return loginService.buildLoginUser(user);
-        });
+        SysUserVo user = loadUserByPhonenumber(phoneNumber);
+
+        loginService.checkLogin(LoginType.SMS, user.getUserName(), () -> !validateSmsCode(phoneNumber, smsCode));
+
+        LoginUser loginUser = loginService.buildLoginUser(user);
         loginUser.setClientKey(client.getClientKey());
         loginUser.setDeviceType(client.getDeviceType());
         SaLoginModel model = new SaLoginModel();
@@ -82,39 +79,39 @@ public class SmsAuthStrategy implements IAuthStrategy {
     /**
      * 校验短信验证码
      */
-    private boolean validateSmsCode(String tenantId, String phonenumber, String smsCode) {
-        String code = RedisUtils.getCacheObject(GlobalConstants.CAPTCHA_CODE_KEY + phonenumber);
+    private boolean validateSmsCode(String phoneNumber, String smsCode) {
+        String code = RedisUtils.getCacheObject(GlobalConstants.CAPTCHA_CODE_KEY + phoneNumber);
         if (StringUtils.isBlank(code)) {
-            loginService.recordLogininfor(tenantId, phonenumber, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.expire"));
+            loginService.recordLogininfor( phoneNumber, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.expire"));
             throw new CaptchaExpireException();
         }
         return code.equals(smsCode);
     }
 
-    private SysUserVo loadUserByPhonenumber(String phonenumber) {
-        SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhoneNumber, phonenumber));
+    private SysUserVo loadUserByPhonenumber(String phoneNumber) {
+        SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhoneNumber, phoneNumber));
         if (ObjectUtil.isNull(user)) {
-            log.info("登录用户：{} 不存在.", phonenumber);
-            return autoRegisterUser(phonenumber);
+            log.info("登录用户：{} 不存在.", phoneNumber);
+            return autoRegisterUser(phoneNumber);
 //            throw new UserException("user.not.exists", phoneNumber);
         } else if (UserStatus.DISABLE.getCode().equals(user.getStatus())) {
-            log.info("登录用户：{} 已被停用.", phonenumber);
-            throw new UserException("user.blocked", phonenumber);
+            log.info("登录用户：{} 已被停用.", phoneNumber);
+            throw new UserException("user.blocked", phoneNumber);
         }
         return user;
     }
-    private SysUserVo autoRegisterUser(String phonenumber) {
+    private SysUserVo autoRegisterUser(String phoneNumber) {
         SysUser newUser = new SysUser();
-        newUser.setPhoneNumber(phonenumber);
-        newUser.setNickName(phonenumber);
+        newUser.setPhoneNumber(phoneNumber);
+        newUser.setNickName(phoneNumber);
         newUser.setUserType(UserType.APP_USER.getUserType());
-        newUser.setUserName(phonenumber); // 可以根据需求设置用户名
+        newUser.setUserName(phoneNumber); // 可以根据需求设置用户名
         newUser.setPassword(generateRandomPassword(10)); // 生成随机密码
         newUser.setStatus(String.valueOf(UserStatus.OK.getCode())); // 设置用户状态为正常
         userMapper.insert(newUser);
 
         // 获取新注册用户的详细信息
-        return userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhoneNumber, phonenumber));
+        return userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhoneNumber, phoneNumber));
     }
     private String generateRandomPassword(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ${SA_TOKEN_JWT_SECRET}0123456789";

@@ -49,9 +49,6 @@ public class OssFactory {
         OssProperties properties = JsonUtils.parseObject(json, OssProperties.class);
         // 使用租户标识避免多个租户相同key实例覆盖
         String key = configKey;
-        if (StringUtils.isNotBlank(properties.getTenantId())) {
-            key = properties.getTenantId() + ":" + configKey;
-        }
         OssClient client = CLIENT_CACHE.get(key);
         // 客户端不存在或配置不相同则重新构建
         if (client == null || !client.checkPropertiesSame(properties)) {

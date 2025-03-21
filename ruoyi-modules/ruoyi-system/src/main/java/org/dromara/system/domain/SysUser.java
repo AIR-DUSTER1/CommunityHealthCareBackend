@@ -1,7 +1,7 @@
 package org.dromara.system.domain;
 
 import org.dromara.common.core.constant.UserConstants;
-import org.dromara.common.tenant.core.TenantEntity;
+import org.dromara.common.mybatis.core.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,7 +19,7 @@ import java.io.Serial;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_user")
-public class SysUser extends TenantEntity {
+public class SysUser extends BaseEntity {
 
     @Serial
     private static final long serialVersionUID = 1L;

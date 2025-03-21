@@ -18,7 +18,7 @@
         </if>
         <if test="ew.getSqlSelect == null">
             u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phone_number, u.sex,u.user_type,u.living_alone,u.marital_status,u.emergency_phone,u.chronic_diseases,u.health_status,u.address,u.age,u.birth_date,
-            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark
+            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.update_by, u.update_time, u.remark,u.create_dept
         </if>
         from sys_user u
         ${ew.getCustomSqlSegment}
@@ -31,7 +31,7 @@
         </if>
         <if test="ew.getSqlSelect == null">
             u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phone_number, u.sex,
-            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark
+            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, u.update_by, u.update_time
         </if>
         from sys_user u
         ${ew.getCustomSqlSegment}
@@ -39,7 +39,7 @@
 
     <select id="selectUserExportList" resultMap="SysUserExportResult">
         select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phone_number, u.sex,
-            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
+            u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,, u.update_by, u.update_time,
             d.dept_name, d.leader, u1.user_name as leaderName
         from sys_user u
             left join sys_dept d on u.dept_id = d.dept_id
