@@ -7,7 +7,7 @@ public class SysUerOderInfo {
     /**
      * 用户账号
      */
-    private String userName;
+    private String nickName;
     /**
      * 手机号码
      */

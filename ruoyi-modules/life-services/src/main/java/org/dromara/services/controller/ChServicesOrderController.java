@@ -104,4 +104,5 @@ public class ChServicesOrderController extends BaseController {
                           @PathVariable String[] servicesOrderIds) {
         return toAjax(chServicesOrderService.deleteWithValidByIds(List.of(servicesOrderIds), true));
     }
+
 }
