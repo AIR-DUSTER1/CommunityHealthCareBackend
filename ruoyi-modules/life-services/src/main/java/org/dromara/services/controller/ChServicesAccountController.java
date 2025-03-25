@@ -113,4 +113,5 @@ public class ChServicesAccountController extends BaseController {
     public R<Long> getAccountIdByUserId(Long userId) {
         return R.ok(chServicesAccountService.getAccountIdByUserId(userId));
     }
+
 }

@@ -2,6 +2,7 @@ package org.dromara.services.controller;
 
 import java.util.List;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
@@ -104,5 +105,9 @@ public class ChServicesOrderController extends BaseController {
                           @PathVariable String[] servicesOrderIds) {
         return toAjax(chServicesOrderService.deleteWithValidByIds(List.of(servicesOrderIds), true));
     }
-
+    @SaIgnore
+    @GetMapping("/app/list")
+    public TableDataInfo<ChServicesOrderVo> appList(ChServicesOrderBo bo, PageQuery pageQuery) {
+        return chServicesOrderService.queryPageListApp(bo, pageQuery);
+    }
 }

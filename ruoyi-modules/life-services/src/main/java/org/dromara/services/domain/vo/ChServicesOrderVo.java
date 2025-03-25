@@ -14,7 +14,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
+import java.util.List;
 
 
 /**
@@ -120,5 +120,7 @@ public class ChServicesOrderVo implements Serializable {
      */
     @ExcelProperty(value = "更新时间")
     private Date updateTime;
+
+    private List<ChServicesVo> orderList;
 
 }

@@ -68,4 +68,5 @@ public interface IChServicesOrderService {
     Boolean deleteWithValidByIds(Collection<String> ids, Boolean isValid);
 
     int changeOrderStatus(ChServicesOrder bo);
+    TableDataInfo<ChServicesOrderVo> queryPageListApp(ChServicesOrderBo bo, PageQuery pageQuery);
 }

@@ -1,6 +1,7 @@
 package org.dromara.web.service.impl;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -106,7 +107,7 @@ public class SmsAuthStrategy implements IAuthStrategy {
         newUser.setNickName(phoneNumber);
         newUser.setUserType(UserType.APP_USER.getUserType());
         newUser.setUserName(phoneNumber); // 可以根据需求设置用户名
-        newUser.setPassword(generateRandomPassword(10)); // 生成随机密码
+        newUser.setPassword(BCrypt.hashpw(phoneNumber.substring(phoneNumber.length() - 8)));
         newUser.setStatus(String.valueOf(UserStatus.OK.getCode())); // 设置用户状态为正常
         userMapper.insert(newUser);
 

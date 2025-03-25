@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.constant.UserConstants;
 import org.dromara.common.core.domain.dto.UserDTO;
+import org.dromara.common.core.domain.model.LoginUser;
+import org.dromara.common.core.enums.UserStatus;
 import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.MapstructUtils;
@@ -700,5 +702,20 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     @Override
     public List<SysUerOderInfo> queryUserOderInfo(Long userId) {
         return baseMapper.queryUserAddress(userId);
+    }
+    @Override
+    public Boolean signinUser(SysUserBo bo) {
+        SysUser update = MapstructUtils.convert(bo, SysUser.class);
+        LoginUser user = LoginHelper.getLoginUser();
+        if (ObjectUtil.isNull(user)){
+            throw new ServiceException("请先登录");
+        }
+        SysUserVo vo = selectUserById(user.getUserId());
+        if (!UserConstants.USER_UNCOMPLETED.equals(vo.getStatus())) {
+            throw new ServiceException("用户信息完整，请勿重复填写");
+        }
+        SpringUtils.copyPropertiesIgnoreNull(vo, update);
+        update.setStatus(UserStatus.OK.getCode());
+        return baseMapper.updateById(update) > 0;
     }
 }

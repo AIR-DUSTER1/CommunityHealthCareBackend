@@ -291,4 +291,8 @@ public class SysUserController extends BaseController {
     public R<List<SysUerOderInfo>> queryUserOderInfo(Long userId){
         return R.ok(userService.queryUserOderInfo(userId));
     }
+    @PostMapping("/signIn")
+    public R<Void> signin(@RequestBody SysUserBo user) {
+        return toAjax(userService.signinUser(user));
+    }
 }

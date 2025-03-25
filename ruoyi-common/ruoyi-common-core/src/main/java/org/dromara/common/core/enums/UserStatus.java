@@ -22,7 +22,11 @@ public enum UserStatus {
     /**
      * 删除
      */
-    DELETED("2", "删除");
+    DELETED("2", "删除"),
+    /**
+     * 待完善
+     */
+    UNCOMPLETED("3","待完善");
 
     private final String code;
     private final String info;

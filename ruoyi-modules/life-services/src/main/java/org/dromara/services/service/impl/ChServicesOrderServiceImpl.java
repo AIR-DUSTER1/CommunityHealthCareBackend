@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+import org.dromara.services.mapper.ChServicesMapper;
 import org.springframework.stereotype.Service;
 import org.dromara.services.domain.bo.ChServicesOrderBo;
 import org.dromara.services.domain.vo.ChServicesOrderVo;
@@ -16,6 +17,7 @@ import org.dromara.services.domain.ChServicesOrder;
 import org.dromara.services.mapper.ChServicesOrderMapper;
 import org.dromara.services.service.IChServicesOrderService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
@@ -31,7 +33,8 @@ import java.util.Collection;
 public class ChServicesOrderServiceImpl implements IChServicesOrderService {
 
     private final ChServicesOrderMapper baseMapper;
-
+    private final ChServicesMapper servicesMapper;
+    private static Long LAST_ID = 0L;
     /**
      * 查询服务订单
      *
@@ -72,6 +75,8 @@ public class ChServicesOrderServiceImpl implements IChServicesOrderService {
     private LambdaQueryWrapper<ChServicesOrder> buildQueryWrapper(ChServicesOrderBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<ChServicesOrder> lqw = Wrappers.lambdaQuery();
+        lqw.orderByDesc(ChServicesOrder::getUpdateTime);
+        lqw.eq( bo.getUserId() !=null, ChServicesOrder::getUserId, bo.getUserId());
         lqw.like(StringUtils.isNotBlank(bo.getServicesName()), ChServicesOrder::getServicesName, bo.getServicesName());
         lqw.like(StringUtils.isNotBlank(bo.getUserName()), ChServicesOrder::getUserName, bo.getUserName());
         lqw.between(params.get("beginTime") != null && params.get("endTime") != null,
@@ -167,5 +172,13 @@ public class ChServicesOrderServiceImpl implements IChServicesOrderService {
             .set(StringUtils.isNotBlank(bo.getStatus()),ChServicesOrder::getStatus, bo.getStatus())
             .set(StringUtils.isNotBlank(bo.getRemark()),ChServicesOrder::getRemark,bo.getRemark()));
     }
-
+    @Override
+    public TableDataInfo<ChServicesOrderVo> queryPageListApp(ChServicesOrderBo bo, PageQuery pageQuery) {
+        LambdaQueryWrapper<ChServicesOrder> lqw = buildQueryWrapper(bo);
+        Page<ChServicesOrderVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        result.getRecords().forEach(vo -> {
+            vo.setOrderList(servicesMapper.selectVoBatchIds(Arrays.asList(vo.getServiceId())));
+        });
+        return TableDataInfo.build(result);
+    }
 }

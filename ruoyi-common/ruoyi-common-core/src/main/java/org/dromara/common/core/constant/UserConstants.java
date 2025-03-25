@@ -27,7 +27,10 @@ public interface UserConstants {
      * 用户正常状态
      */
     String USER_NORMAL = "0";
-
+    /**
+     * 用户待完善
+     */
+    String USER_UNCOMPLETED = "2";
     /**
      * 用户封禁状态
      */

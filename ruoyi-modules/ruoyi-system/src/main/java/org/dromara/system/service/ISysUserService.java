@@ -226,4 +226,5 @@ public interface ISysUserService {
 
     int updateUserEmail(Long userId,  String email);
     List<SysUerOderInfo> queryUserOderInfo(Long userId);
+    Boolean signinUser(SysUserBo user);
 }
