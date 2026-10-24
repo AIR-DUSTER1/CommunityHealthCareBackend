@@ -32,7 +32,7 @@ public class TestSensitiveController extends BaseController {
         TestSensitive testSensitive = new TestSensitive();
         testSensitive.setIdCard("110101199001010000");
         testSensitive.setPhone("13800138000");
-        testSensitive.setAddress("北京市朝阳区某某四合院1203室");
+        testSensitive.setAddress("北京市朝阳区示例街道1号");
         testSensitive.setEmail("demo@example.com");
         testSensitive.setBankCard("6222020000000000000");
         return R.ok(testSensitive);

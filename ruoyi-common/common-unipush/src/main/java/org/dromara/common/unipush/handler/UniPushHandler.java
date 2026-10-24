@@ -13,6 +13,7 @@ import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,7 +22,8 @@ import java.io.IOException;
 @Component
 public class UniPushHandler{
     ObjectMapper objectMapper = new ObjectMapper();
-    String url = "${UNIPUSH_PUSH_URL}";
+    @Value("${unipush.push-url:}")
+    private String url;
     public String send(String cids, String title, String content) throws IOException {
         // 创建JSON数据
         ObjectMapper objectMapper = new ObjectMapper();

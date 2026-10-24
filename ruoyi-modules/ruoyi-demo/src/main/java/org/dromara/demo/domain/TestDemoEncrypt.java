@@ -14,16 +14,15 @@ public class TestDemoEncrypt extends TestDemo {
     /**
      * key键
      */
-    // @EncryptField(algorithm=AlgorithmType.SM2, privateKey = "${MYBATIS_ENCRYPTOR_SM2_PRIVATE_KEY}", publicKey = "${MYBATIS_ENCRYPTOR_SM2_PUBLIC_KEY}")
-    @EncryptField(algorithm = AlgorithmType.RSA, privateKey = "${MYBATIS_ENCRYPTOR_PRIVATE_KEY}", publicKey = "${MYBATIS_ENCRYPTOR_PUBLIC_KEY}")
+    // 密钥请在 mybatis-encryptor 配置中通过环境变量提供，禁止硬编码
+    @EncryptField(algorithm = AlgorithmType.RSA)
     private String testKey;
 
     /**
      * 值
      */
     // @EncryptField // 什么也不写走默认yml配置
-    // @EncryptField(algorithm = AlgorithmType.SM4, password = "${MYBATIS_ENCRYPTOR_PASSWORD}")
-    @EncryptField(algorithm = AlgorithmType.AES, password = "${MYBATIS_ENCRYPTOR_PASSWORD}")
+    @EncryptField(algorithm = AlgorithmType.AES)
     private String value;
 
 }

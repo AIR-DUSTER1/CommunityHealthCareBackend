@@ -42,7 +42,7 @@ CREATE TABLE sj_group_config
     namespace_id      varchar2(64)  DEFAULT '764d604ec6fc45f68cd92514c40e9e1a'    NULL,
     group_name        varchar2(64)  DEFAULT ''                                    NULL,
     description       varchar2(256) DEFAULT ''                                    NULL,
-    token             varchar2(64)  DEFAULT '${SNAIL_JOB_TOKEN}' NULL,
+    token             varchar2(64)  DEFAULT 'SJ_CHANGE_ME' NULL,
     group_status      smallint      DEFAULT 0                                     NOT NULL,
     version           number                                                      NOT NULL,
     group_partition   number                                                      NOT NULL,
@@ -73,7 +73,7 @@ COMMENT ON COLUMN sj_group_config.create_dt IS '创建时间';
 COMMENT ON COLUMN sj_group_config.update_dt IS '修改时间';
 COMMENT ON TABLE sj_group_config IS '组配置';
 
-INSERT INTO sj_group_config (namespace_id, group_name, description, token, group_status, version, group_partition, id_generator_mode, init_scene, bucket_index, create_dt, update_dt) VALUES ('dev', 'ruoyi_group', '', '${SNAIL_JOB_TOKEN}', 1, 1, 0, 1, 1, 4, sysdate, sysdate);
+INSERT INTO sj_group_config (namespace_id, group_name, description, token, group_status, version, group_partition, id_generator_mode, init_scene, bucket_index, create_dt, update_dt) VALUES ('dev', 'ruoyi_group', '', 'SJ_CHANGE_ME', 1, 1, 0, 1, 1, 4, sysdate, sysdate);
 
 -- sj_notify_config
 CREATE TABLE sj_notify_config

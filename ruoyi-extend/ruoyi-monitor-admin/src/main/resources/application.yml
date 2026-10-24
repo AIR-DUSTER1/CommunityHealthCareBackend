@@ -13,8 +13,8 @@ logging:
 spring:
   security:
     user:
-      name: ruoyi
-      password: ${SPRING_BOOT_ADMIN_PASSWORD}
+      name: ${SPRING_BOOT_ADMIN_USER:admin}
+      password: ${SPRING_BOOT_ADMIN_PASSWORD:change-me}
   boot:
     admin:
       ui:
@@ -44,5 +44,5 @@ spring.boot.admin.client:
     metadata:
       username: ${spring.boot.admin.client.username}
       userpassword: ${spring.boot.admin.client.password}
-  username: ruoyi
-  password: ${SPRING_BOOT_ADMIN_PASSWORD}
+  username: ${SPRING_BOOT_ADMIN_USER:admin}
+  password: ${SPRING_BOOT_ADMIN_PASSWORD:change-me}

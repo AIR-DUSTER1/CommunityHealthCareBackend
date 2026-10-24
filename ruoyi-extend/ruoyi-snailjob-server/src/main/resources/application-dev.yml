@@ -3,8 +3,8 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ry-vue?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: root
-    password: ${DB_PASSWORD}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
     hikari:
       connection-timeout: 30000
       validation-timeout: 5000
@@ -46,5 +46,5 @@ spring.boot.admin.client:
     metadata:
       username: ${spring.boot.admin.client.username}
       userpassword: ${spring.boot.admin.client.password}
-  username: ruoyi
-  password: ${SPRING_BOOT_ADMIN_PASSWORD}
+  username: ${SPRING_BOOT_ADMIN_USER:admin}
+  password: ${SPRING_BOOT_ADMIN_PASSWORD:change-me}

@@ -89,7 +89,7 @@ CREATE TABLE sj_group_config
     namespace_id      nvarchar(64)  NOT NULL DEFAULT '764d604ec6fc45f68cd92514c40e9e1a',
     group_name        nvarchar(64)  NOT NULL DEFAULT '',
     description       nvarchar(256) NOT NULL DEFAULT '',
-    token             nvarchar(64)  NOT NULL DEFAULT '${SNAIL_JOB_TOKEN}',
+    token             nvarchar(64)  NOT NULL DEFAULT 'SJ_CHANGE_ME',
     group_status      tinyint       NOT NULL DEFAULT 0,
     version           int           NOT NULL,
     group_partition   int           NOT NULL,
@@ -201,7 +201,7 @@ EXEC sp_addextendedproperty
      'TABLE', N'sj_group_config'
 GO
 
-INSERT INTO sj_group_config(namespace_id, group_name, description, token, group_status, version, group_partition, id_generator_mode, init_scene, bucket_index, create_dt, update_dt) VALUES (N'dev', N'ruoyi_group', N'', N'${SNAIL_JOB_TOKEN}', N'1', N'1', N'0', N'1', N'1', N'4', getdate(), getdate())
+INSERT INTO sj_group_config(namespace_id, group_name, description, token, group_status, version, group_partition, id_generator_mode, init_scene, bucket_index, create_dt, update_dt) VALUES (N'dev', N'ruoyi_group', N'', N'SJ_CHANGE_ME', N'1', N'1', N'0', N'1', N'1', N'4', getdate(), getdate())
 GO
 
 -- sj_notify_config

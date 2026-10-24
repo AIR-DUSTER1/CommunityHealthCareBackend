@@ -24,7 +24,7 @@ CREATE TABLE `sj_group_config`
     `namespace_id`      varchar(64)         NOT NULL DEFAULT '764d604ec6fc45f68cd92514c40e9e1a' COMMENT '命名空间id',
     `group_name`        varchar(64)         NOT NULL DEFAULT '' COMMENT '组名称',
     `description`       varchar(256)        NOT NULL DEFAULT '' COMMENT '组描述',
-    `token`             varchar(64)         NOT NULL DEFAULT '${SNAIL_JOB_TOKEN}' COMMENT 'token',
+    `token`             varchar(64)         NOT NULL DEFAULT 'SJ_CHANGE_ME' COMMENT 'token',
     `group_status`      tinyint(4)          NOT NULL DEFAULT 0 COMMENT '组状态 0、未启用 1、启用',
     `version`           int(11)             NOT NULL COMMENT '版本号',
     `group_partition`   int(11)             NOT NULL COMMENT '分区',
@@ -39,7 +39,7 @@ CREATE TABLE `sj_group_config`
   AUTO_INCREMENT = 0
   DEFAULT CHARSET = utf8mb4 COMMENT ='组配置';
 
-INSERT INTO `sj_group_config` VALUES (1, 'dev', 'ruoyi_group', '', '${SNAIL_JOB_TOKEN}', 1, 1, 0, 1, 1, 4, now(), now());
+INSERT INTO `sj_group_config` VALUES (1, 'dev', 'ruoyi_group', '', 'SJ_CHANGE_ME', 1, 1, 0, 1, 1, 4, now(), now());
 
 CREATE TABLE `sj_notify_config`
 (
