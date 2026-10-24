@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara</groupId>
         <artifactId>ruoyi-common</artifactId>
-        <version>5.2.2</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>ruoyi-common-ai</artifactId>

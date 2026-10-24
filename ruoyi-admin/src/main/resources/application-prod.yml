@@ -261,3 +261,13 @@ justauth:
       client-id: 10**********6
       client-secret: 1f7d08**********5b7**********29e
       redirect-uri: ${justauth.address}/social-callback?source=gitlab
+
+--- # 大模型配置
+spring:
+  ai:
+    dashscope:
+      # 请通过环境变量配置真实密钥
+      api-key: ${DASHSCOPE_API_KEY:sk-placeholder-not-a-real-key}
+      chat:
+        options:
+          model: deepseek-r1

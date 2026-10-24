@@ -269,7 +269,8 @@ alipay:
 spring:
   ai:
     dashscope:
-      api-key: ${DASHSCOPE_API_KEY:}
+      # 占位值仅用于保证应用启动；请通过环境变量配置真实密钥后再使用 AI 接口
+      api-key: ${DASHSCOPE_API_KEY:sk-placeholder-not-a-real-key}
       chat:
         options:
           model: deepseek-r1
